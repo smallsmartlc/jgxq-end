@@ -15,6 +15,7 @@ public class TestController {
 
     @RequestMapping("/test")
     public ResponseMessage getSomething(){
+
         throw new NullPointerException();
     }
 
