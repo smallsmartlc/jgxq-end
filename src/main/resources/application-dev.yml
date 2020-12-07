@@ -4,6 +4,10 @@ server:
 spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/forum?useUnicode=true&characterEncoding=UTF8
+    url: jdbc:mysql://localhost:3306/forum?useUnicode=true&characterEncoding=UTF8&useSSL=false
     username: root
     password: password
+
+JWTParam:
+  cookieDomain: hy-teamwork.dev.svc.cluster.local
+  cookieSecure: false

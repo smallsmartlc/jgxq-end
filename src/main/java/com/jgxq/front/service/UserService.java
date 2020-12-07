@@ -1,7 +1,11 @@
 package com.jgxq.front.service;
 
+import com.jgxq.common.res.UserRes;
 import com.jgxq.front.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 
 /**
  * <p>
@@ -13,4 +17,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface UserService extends IService<User> {
 
+    User login(String email, String password);
 }

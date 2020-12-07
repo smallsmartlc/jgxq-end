@@ -3,3 +3,11 @@ spring:
     name: forum
   profiles:
     active: dev
+
+JWTParam:
+  BASE64_ENCODE_SECRET_KEY: "FiHs5Ib3jVZlOk3TKDiSho=="
+  BEARER: "jgxq"
+  JG_COOKIE: "smart_jgxq_cookie"
+  KEY_LENGTH: 8
+  EXP_DAYS: 90 # JWT过期时间：多少天后失效
+  EXP_TIME: "04:00:00" # JWT过期时间：具体几点（24小时制）
