@@ -1,11 +1,9 @@
 package com.jgxq.front.service;
 
-import com.jgxq.common.res.UserRes;
+import com.jgxq.common.req.UserRegReq;
+import com.jgxq.common.res.UserRegRes;
 import com.jgxq.front.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
-
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 
 /**
  * <p>
@@ -18,4 +16,6 @@ import java.security.spec.InvalidKeySpecException;
 public interface UserService extends IService<User> {
 
     User login(String email, String password);
+
+    UserRegRes addUser(UserRegReq userReq);
 }

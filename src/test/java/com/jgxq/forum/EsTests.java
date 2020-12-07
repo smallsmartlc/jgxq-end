@@ -1,7 +1,7 @@
 package com.jgxq.forum;
 
 import com.alibaba.fastjson.JSON;
-import com.jgxq.common.res.UserRes;
+import com.jgxq.common.res.UserLoginRes;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
@@ -81,7 +81,7 @@ public class EsTests {
     //测试添加文档
     @Test
     void addDocument() throws IOException {
-        UserRes userRes = new UserRes(1, "hhh", "昵称", "头像", "重庆", 1);
+        UserLoginRes userRes = new UserLoginRes(1, "hhh", "昵称", "头像", "重庆", 1);
         //创建索引对象
         IndexRequest request = new IndexRequest("smart_index");
         // 规则 PUT /smart_index/user/1
@@ -123,7 +123,7 @@ public class EsTests {
     void updateDocument() throws IOException {
         UpdateRequest request = new UpdateRequest("smart_index", "1");
 
-        UserRes userRes = new UserRes();
+        UserLoginRes userRes = new UserLoginRes();
         userRes.setCity("贵州");
         request.doc(JSON.toJSONString(userRes), XContentType.JSON);
 
@@ -144,12 +144,12 @@ public class EsTests {
         BulkRequest bulkRequest = new BulkRequest();
         bulkRequest.timeout("10s");
 
-        List<UserRes> userList = new ArrayList<>();
-        userList.add(new UserRes(1, "hhh", "昵称", "头像", "重庆", 1));
-        userList.add(new UserRes(2, "hhh", "昵称", "头像", "重庆", 1));
-        userList.add(new UserRes(3, "hhh", "昵称", "头像", "重庆", 1));
-        userList.add(new UserRes(4, "hhh", "昵称", "头像", "重庆", 1));
-        userList.add(new UserRes(5, "hhh", "昵称", "头像", "重庆", 1));
+        List<UserLoginRes> userList = new ArrayList<>();
+        userList.add(new UserLoginRes(1, "hhh", "昵称", "头像", "重庆", 1));
+        userList.add(new UserLoginRes(2, "hhh", "昵称", "头像", "重庆", 1));
+        userList.add(new UserLoginRes(3, "hhh", "昵称", "头像", "重庆", 1));
+        userList.add(new UserLoginRes(4, "hhh", "昵称", "头像", "重庆", 1));
+        userList.add(new UserLoginRes(5, "hhh", "昵称", "头像", "重庆", 1));
 
         for (int i = 0; i < userList.size(); i++) {
             bulkRequest.add(new IndexRequest("smart_index")
