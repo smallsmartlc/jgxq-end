@@ -5,6 +5,7 @@ import com.jgxq.common.req.UserRegReq;
 import com.jgxq.common.res.UserRegRes;
 import com.jgxq.common.utils.LoginUtils;
 import com.jgxq.common.utils.PasswordHash;
+import com.jgxq.core.entity.AuthContext;
 import com.jgxq.front.define.KeyLengthEnum;
 import com.jgxq.front.entity.User;
 import com.jgxq.front.mapper.UserMapper;
@@ -13,6 +14,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * <p>
@@ -69,5 +72,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         userRes.setUserkey(user.getUserkey());
 
         return userRes;
+    }
+
+    public AuthContext getAuthContextByKey(HttpServletRequest request, String userkey) {
+        User user = new User();
+        user.setUserkey(userkey);
+        User res = userMapper.selectOne(new QueryWrapper<>(user));
+        AuthContext authContext = new AuthContext();
+        BeanUtils.copyProperties(res,authContext);
+        return authContext;
     }
 }

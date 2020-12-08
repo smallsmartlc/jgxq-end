@@ -9,7 +9,10 @@ import com.jgxq.common.res.UserRegRes;
 import com.jgxq.common.utils.CookieUtils;
 import com.jgxq.common.utils.JwtUtil;
 import com.jgxq.common.utils.LoginUtils;
+import com.jgxq.core.anotation.AllowAccess;
+import com.jgxq.core.anotation.UserPermissionConf;
 import com.jgxq.core.enums.CommonErrorCode;
+import com.jgxq.core.enums.UserPermissionType;
 import com.jgxq.core.resp.ResponseMessage;
 import com.jgxq.front.define.ForumErrorCode;
 import com.jgxq.front.entity.User;
@@ -42,6 +45,7 @@ import java.util.concurrent.TimeUnit;
 @RestController
 @RequestMapping("/user")
 @Validated
+@UserPermissionConf(Type = UserPermissionType.ALLOW)
 public class UserController {
 
     @Value("${JWTParam.cookieSecure}")

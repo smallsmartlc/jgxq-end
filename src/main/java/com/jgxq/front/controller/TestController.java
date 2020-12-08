@@ -1,6 +1,9 @@
 package com.jgxq.front.controller;
 
+import com.jgxq.core.anotation.AllowAccess;
+import com.jgxq.core.anotation.UserPermissionConf;
 import com.jgxq.core.resp.ResponseMessage;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -9,12 +12,20 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2020-12-06
  **/
 @RestController
+@UserPermissionConf
 public class TestController {
 
     @RequestMapping("/test")
-    public ResponseMessage getSomething(){
+    public ResponseMessage getSomething(@RequestAttribute("userKey")String userKey){
 
-        throw new NullPointerException();
+        return new ResponseMessage("hhhhh");
+    }
+
+    @AllowAccess
+    @RequestMapping("/test2")
+    public ResponseMessage getSomething2(){
+
+        return new ResponseMessage("hhhhh");
     }
 
 }
