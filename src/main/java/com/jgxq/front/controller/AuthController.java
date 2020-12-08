@@ -3,6 +3,7 @@ package com.jgxq.front.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.jgxq.common.req.UserEmailLoginReq;
+import com.jgxq.common.req.UserFindPasswordReq;
 import com.jgxq.common.req.UserLoginReq;
 import com.jgxq.common.req.UserRegReq;
 import com.jgxq.common.res.UserLoginRes;
@@ -14,8 +15,10 @@ import com.jgxq.core.anotation.AllowAccess;
 import com.jgxq.core.anotation.UserPermissionConf;
 import com.jgxq.core.enums.CommonErrorCode;
 import com.jgxq.core.enums.UserPermissionType;
+import com.jgxq.core.exception.SmartException;
 import com.jgxq.core.resp.ResponseMessage;
 import com.jgxq.front.define.ForumErrorCode;
+import com.jgxq.front.define.VerificationCodeTypeEnum;
 import com.jgxq.front.entity.User;
 import com.jgxq.front.sender.JGMailSender;
 import com.jgxq.front.sender.RedisCache;
@@ -61,23 +64,23 @@ public class AuthController {
     @Autowired
     private RedisCache cache;
 
-    @PostMapping("getCode/{email}/{isReg}")
-    public ResponseMessage getLoginCode(@PathVariable("email") @Email(message = "邮箱地址不合法!") String email,
-                                        @PathVariable("isReg") Boolean isReg) {
+    @PostMapping("getCode/{email}/{type}")
+    public ResponseMessage getCode(@PathVariable("email") @Email(message = "邮箱地址不合法!") String email,
+                                   @PathVariable("type") VerificationCodeTypeEnum type) {
 
-        if(!isReg){
-            User user = userService.getUserByPK("email",email);
-            if(user == null){
+        if (type != VerificationCodeTypeEnum.REG) {
+            User user = userService.getUserByPK("email", email);
+            if (user == null) {
                 return new ResponseMessage(ForumErrorCode.Email_Send_Error, "该账号不存在");
             }
         }
         String code = LoginUtils.createValidateCode(6);
-        String key = LoginUtils.emailToRedisKey(email, isReg);
+        String key = LoginUtils.emailToRedisKey(email, type);
         //把这个马放进redis并设置过期时间
         cache.setExpired(key, code, 5, TimeUnit.MINUTES);
         //发送邮件
         try {
-            mailSender.sendVerificationCode(email, code, isReg);
+            mailSender.sendVerificationCode(email, code, type);
         } catch (MessagingException e) {
             return new ResponseMessage(ForumErrorCode.Email_Send_Error, "邮件发送失败");
         }
@@ -123,7 +126,8 @@ public class AuthController {
     @PostMapping("register")
     public ResponseMessage register(@RequestBody @Validated UserRegReq userReq) {
 
-        String verifyCode = cache.get(LoginUtils.emailToRedisKey(userReq.getEmail(), true), String.class);
+        String key = LoginUtils.emailToRedisKey(userReq.getEmail(), VerificationCodeTypeEnum.REG);
+        String verifyCode = cache.get(key, String.class);
         if (verifyCode == null) {
             return new ResponseMessage(CommonErrorCode.BAD_PARAMETERS.getErrorCode(), "验证码不存在或已过期");
         }
@@ -146,22 +150,22 @@ public class AuthController {
         if (userRes == null) {
             return new ResponseMessage(CommonErrorCode.UNKNOWN_ERROR.getErrorCode(), "注册失败");
         }
-
+        cache.delete(key);
         return new ResponseMessage(userRes);
     }
 
     @PostMapping("emailLogin")
     public ResponseMessage emailLogin(@RequestBody @Validated UserEmailLoginReq userReq,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response){
-        String verifyCode = cache.get(LoginUtils.emailToRedisKey(userReq.getEmail(), false), String.class);
+                                      HttpServletRequest request,
+                                      HttpServletResponse response) {
+        String verifyCode = cache.get(LoginUtils.emailToRedisKey(userReq.getEmail(), VerificationCodeTypeEnum.LOG), String.class);
         if (verifyCode == null) {
             return new ResponseMessage(CommonErrorCode.BAD_PARAMETERS.getErrorCode(), "验证码不存在或已过期");
         }
         if (!verifyCode.toUpperCase().equals(userReq.getVerificationCode().toUpperCase())) {
             return new ResponseMessage(CommonErrorCode.BAD_PARAMETERS.getErrorCode(), "验证码错误");
         }
-        User user = userService.getUserByPK("email",userReq.getEmail());
+        User user = userService.getUserByPK("email", userReq.getEmail());
         if (user == null) {
             //登陆失败
             return new ResponseMessage(ForumErrorCode.TelOrPassword_Error.getErrorCode(), "该邮箱下没有账号,请检查是否拼写正确");
@@ -188,4 +192,26 @@ public class AuthController {
         return new ResponseMessage(userRes);
     }
 
+    @PostMapping("findPassword")
+    public ResponseMessage findPassword(@RequestBody @Validated UserFindPasswordReq userReq) {
+        String key = LoginUtils.emailToRedisKey(userReq.getEmail(), VerificationCodeTypeEnum.FIND);
+        String verifyCode = cache.get(key, String.class);
+        if (verifyCode == null) {
+            return new ResponseMessage(CommonErrorCode.BAD_PARAMETERS.getErrorCode(), "验证码不存在或已过期");
+        }
+        if (!verifyCode.toUpperCase().equals(userReq.getVerificationCode().toUpperCase())) {
+            return new ResponseMessage(CommonErrorCode.BAD_PARAMETERS.getErrorCode(), "验证码错误");
+        }
+        if (!LoginUtils.checkPassword(userReq.getPassword())) {
+            // 判断密码规则是否合法，字母、数字、特殊字符最少2种组合（不能有中文和空格）
+            return new ResponseMessage(CommonErrorCode.BAD_PARAMETERS.getErrorCode(), "密码必须含有字母,数字,特殊字符最少两种组合!");
+        }
+        boolean flag = userService.updatePassword(userReq);
+        if (flag) {
+            cache.delete(key);
+        }else {
+            throw new SmartException(CommonErrorCode.BAD_PARAMETERS.getErrorCode(),"该账户不存在!!");
+        }
+        return new ResponseMessage(flag);
+    }
 }

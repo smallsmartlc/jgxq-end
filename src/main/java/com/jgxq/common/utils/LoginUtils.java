@@ -1,5 +1,7 @@
 package com.jgxq.common.utils;
 
+import com.jgxq.front.define.VerificationCodeTypeEnum;
+
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Matcher;
@@ -62,8 +64,8 @@ public class LoginUtils {
         return code.toString();
     }
 
-    public static String emailToRedisKey(String email,boolean isReg){
-        String type = isReg?"_reg_":"_log_";
-        return "JG"+type+email;
+    public static String emailToRedisKey(String email, VerificationCodeTypeEnum type){
+        String typeStr = "_"+type+"_";
+        return "JG"+typeStr+email;
     }
 }

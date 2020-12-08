@@ -1,5 +1,6 @@
 package com.jgxq.front.service;
 
+import com.jgxq.common.req.UserFindPasswordReq;
 import com.jgxq.common.req.UserRegReq;
 import com.jgxq.common.res.UserRegRes;
 import com.jgxq.front.entity.User;
@@ -20,4 +21,6 @@ public interface UserService extends IService<User> {
     UserRegRes addUser(UserRegReq userReq);
 
     User getUserByPK(String col, String PK);
+
+    boolean updatePassword(UserFindPasswordReq userReq);
 }

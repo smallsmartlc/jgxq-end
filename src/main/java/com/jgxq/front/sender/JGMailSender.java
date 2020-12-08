@@ -1,5 +1,6 @@
 package com.jgxq.front.sender;
 
+import com.jgxq.front.define.VerificationCodeTypeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -22,16 +23,23 @@ public class JGMailSender {
     @Autowired
     private JavaMailSender mailSender;
 
-    public void sendVerificationCode(String to, String verificationCode, Boolean isReg) throws MessagingException {
+    public void sendVerificationCode(String to, String verificationCode, VerificationCodeTypeEnum type) throws MessagingException {
         String content = null;
-        if (isReg) {
+        String subject = null;
+        if (type == VerificationCodeTypeEnum.REG) {
             content = "<h1>经管雄起</h1>\n" +
                     "<div style = 'color : red'>您正在注册经管雄起官方账号,验证码" + verificationCode + "</div>\n";
-        } else {
+            subject = "经管雄起-注册账号";
+        } else if(type == VerificationCodeTypeEnum.LOG){
             content = "<h1>经管雄起</h1>\n" +
                     "<div style = 'color : red'>您正在使用验证码登陆经管雄起官方账号,验证码" + verificationCode + "</div>\n";
+            subject = "经管雄起-身份验证";
+        }else if(type == VerificationCodeTypeEnum.FIND){
+            content = "<h1>经管雄起</h1>\n" +
+                    "<div style = 'color : red'>您正在使用验证码找回经管雄起官方账号密码,验证码" + verificationCode + "</div>\n";
+            subject = "经管雄起-找回密码";
         }
-        sendEmail(to, "经管雄起-身份验证",
+        sendEmail(to, subject,
                 content);
     }
 

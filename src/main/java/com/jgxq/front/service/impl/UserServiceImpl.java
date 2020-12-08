@@ -1,6 +1,8 @@
 package com.jgxq.front.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.jgxq.common.req.UserFindPasswordReq;
 import com.jgxq.common.req.UserRegReq;
 import com.jgxq.common.res.UserRegRes;
 import com.jgxq.common.utils.LoginUtils;
@@ -75,12 +77,28 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
+    public boolean updatePassword(UserFindPasswordReq userReq) {
+        try {
+            userReq.setPassword(PasswordHash.createHash(userReq.getPassword()));
+        } catch (Exception e) {
+            return false;
+        }
+        UpdateWrapper<User> wrapper = new UpdateWrapper<>();
+        wrapper.eq("email",userReq.getEmail())
+                .set("password",userReq.getPassword());
+        int flag = userMapper.update(null, wrapper);
+        return flag > 0;
+    }
+
+    @Override
     public User getUserByPK(String col, String PK) {
         QueryWrapper<User> wrapper = new QueryWrapper<>();
         wrapper.eq(col, PK);
         User user = userMapper.selectOne(wrapper);
         return user;
     }
+
+
 
     public AuthContext getAuthContextByKey(HttpServletRequest request, String userkey) {
         User user = new User();
