@@ -23,9 +23,9 @@ public enum ForumErrorCode {
     TelOrPassword_Error("0068000004"),
 
     /**
-     * 短信发送失败
+     * 邮件发送失败
      */
-    Message_Send_Error("0068000005"),
+    Email_Send_Error("0068000005"),
 
     /**
      * 用户已存在

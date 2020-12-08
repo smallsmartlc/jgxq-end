@@ -134,6 +134,7 @@ public class TeamworkGlobalExceptionHandler {
     }
 
     private String toString(ConstraintViolation<?> violation) {
-        return violation.getPropertyPath() + "校验失败：" + violation.getMessage();
+        return violation.getMessage();
+//        return violation.getPropertyPath() + "校验失败：" + violation.getMessage();
     }
 }

@@ -7,6 +7,14 @@ spring:
     url: jdbc:mysql://localhost:3306/forum?useUnicode=true&characterEncoding=UTF8&useSSL=false
     username: root
     password: password
+  mail:
+    host: smtp.qq.com
+    username: jgxq@foxmail.com
+    password: rwclfxtpyvgdddeb
+    default-encoding: UTF-8
+  redis:
+    host: 127.0.0.1
+    port: 6379
 
 JWTParam:
   cookieDomain: hy-teamwork.dev.svc.cluster.local

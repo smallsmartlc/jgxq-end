@@ -1,5 +1,6 @@
 package com.jgxq.common.utils;
 
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -49,5 +50,20 @@ public class LoginUtils {
 
             return builder.toString();
         }
+    }
+
+    private static final String CODE_STR = "0123456789";
+    public static String createValidateCode(int num) {
+        StringBuilder code = new StringBuilder(num);
+        for (int i = 0; i < num; i++) {
+            char ch = CODE_STR.charAt(new Random().nextInt(CODE_STR.length()));
+            code.append(ch);
+        }
+        return code.toString();
+    }
+
+    public static String emailToRedisKey(String email,boolean isReg){
+        String type = isReg?"_reg_":"_log_";
+        return "JG"+type+email;
     }
 }

@@ -23,4 +23,7 @@ public class UserRegReq {
     @Size(min=6, max=15, message="密码长度只能在6-15之间")
     String password;
 
+    @NotBlank(message = "验证码不能为空")
+    String verificationCode;
+
 }
