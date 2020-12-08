@@ -18,4 +18,6 @@ public interface UserService extends IService<User> {
     User login(String email, String password);
 
     UserRegRes addUser(UserRegReq userReq);
+
+    User getUserByPK(String col, String PK);
 }

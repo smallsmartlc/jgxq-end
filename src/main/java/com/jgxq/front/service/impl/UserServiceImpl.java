@@ -74,6 +74,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return userRes;
     }
 
+    @Override
+    public User getUserByPK(String col, String PK) {
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.eq(col, PK);
+        User user = userMapper.selectOne(wrapper);
+        return user;
+    }
+
     public AuthContext getAuthContextByKey(HttpServletRequest request, String userkey) {
         User user = new User();
         user.setUserkey(userkey);

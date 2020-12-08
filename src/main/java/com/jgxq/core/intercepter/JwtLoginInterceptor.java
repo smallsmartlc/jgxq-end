@@ -27,14 +27,8 @@ import javax.servlet.http.HttpServletResponse;
 @Component
 public class JwtLoginInterceptor extends HandlerInterceptorAdapter {
 
-    private static final String ERROR = "error";
-    private static final String ERROR_HTML = "errorHtml";
-
     @Autowired
     private UserServiceImpl userService;
-
-    @Autowired
-    private RedisCache redisCache;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
@@ -91,9 +85,7 @@ public class JwtLoginInterceptor extends HandlerInterceptorAdapter {
             setRespError(response, HttpStatus.BAD_REQUEST.value(), "invalid token");
             return false;
         }
-        QueryWrapper<User> wrapper = new QueryWrapper<>();
-        wrapper.eq("userkey", userkey);
-        User user = userService.getOne(wrapper);
+        User user = userService.getUserByPK("userkey",userkey);
         if (user == null) {
             //说明这是一个垃圾Cookie,解析出一个没用的key,可能用户已经被删除无法登陆了
             // 删掉这个垃圾Cookie
