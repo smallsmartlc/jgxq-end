@@ -1,5 +1,6 @@
 package com.jgxq.front.controller;
 
+import com.jgxq.core.anotation.UserPermissionConf;
 import com.jgxq.core.enums.CommonErrorCode;
 import com.jgxq.core.exception.SmartException;
 import com.jgxq.core.resp.ResponseMessage;
@@ -21,6 +22,7 @@ import java.util.List;
  **/
 @RestController
 @RequestMapping("file")
+@UserPermissionConf
 public class FileController {
 
     /**

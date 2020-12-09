@@ -63,7 +63,7 @@ public class MybatisPlusGenerator {
         // TODO: bug = "执行前请注意参数配置，别把重要类覆盖了。";
         boolean fileOverride = false;
         // String tableNameStr ="";
-        String tableNameStr = "user";
+        String tableNameStr = "team";
         boolean notNeedController = false;
         boolean notNeedService = false;
         boolean notNeedMapper = false; // 注意mapper中是否有自定义sql

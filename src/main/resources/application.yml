@@ -3,6 +3,10 @@ spring:
     name: forum
   profiles:
     active: dev
+  servlet:
+    multipart:
+      max-request-size: 10MB
+      max-file-size: 10MB
 
 JWTParam:
   BASE64_ENCODE_SECRET_KEY: "FiHs5Ib3jVZlOk3TKDiSho=="
