@@ -17,7 +17,7 @@ spring:
     port: 6379
 
 JWTParam:
-  cookieDomain: hy-teamwork.dev.svc.cluster.local
+  cookieDomain: localhost
   cookieSecure: false
 
 mybatis-plus:

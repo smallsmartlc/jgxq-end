@@ -1,4 +1,4 @@
-package com.jgxq.front.controller;
+package com.jgxq.front.controller.admin;
 
 import com.jgxq.core.anotation.UserPermissionConf;
 import org.springframework.web.bind.annotation.RestController;

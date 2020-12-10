@@ -60,7 +60,7 @@ public class MybatisPlusGenerator {
          * 2、需要生成的表名
          * 3、不需要某一层  设置为 null
          */
-        // TODO: bug = "执行前请注意参数配置，别把重要类覆盖了。";
+        //  bug = "执行前请注意参数配置，别把重要类覆盖了。";
         boolean fileOverride = false;
         // String tableNameStr ="";
         String tableNameStr = "player";

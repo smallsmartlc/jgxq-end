@@ -1,4 +1,4 @@
-package com.jgxq.front.controller;
+package com.jgxq.front.controller.user;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
