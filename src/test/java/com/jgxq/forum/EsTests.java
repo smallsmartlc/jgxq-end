@@ -81,18 +81,18 @@ public class EsTests {
     //测试添加文档
     @Test
     void addDocument() throws IOException {
-        UserLoginRes userRes = new UserLoginRes(1, "hhh", "昵称", "头像", "重庆", 1);
-        //创建索引对象
-        IndexRequest request = new IndexRequest("smart_index");
-        // 规则 PUT /smart_index/user/1
-        request.id("1").timeout(TimeValue.timeValueSeconds(3));//链式
-        request.source(JSON.toJSONString(userRes), XContentType.JSON);
-        //发送请求
-
-        IndexResponse index = client.index(request, RequestOptions.DEFAULT);
-
-        System.out.println(index.getIndex());
-        System.out.println(index.status());
+//        UserLoginRes userRes = new UserLoginRes(1, "hhh", "昵称", "头像", "重庆", 1);
+//        //创建索引对象
+//        IndexRequest request = new IndexRequest("smart_index");
+//        // 规则 PUT /smart_index/user/1
+//        request.id("1").timeout(TimeValue.timeValueSeconds(3));//链式
+//        request.source(JSON.toJSONString(userRes), XContentType.JSON);
+//        //发送请求
+//
+//        IndexResponse index = client.index(request, RequestOptions.DEFAULT);
+//
+//        System.out.println(index.getIndex());
+//        System.out.println(index.status());
 
     }
 
@@ -141,23 +141,23 @@ public class EsTests {
     //批量插入
     @Test
     void testBulkRequest() throws IOException {
-        BulkRequest bulkRequest = new BulkRequest();
-        bulkRequest.timeout("10s");
-
-        List<UserLoginRes> userList = new ArrayList<>();
-        userList.add(new UserLoginRes(1, "hhh", "昵称", "头像", "重庆", 1));
-        userList.add(new UserLoginRes(2, "hhh", "昵称", "头像", "重庆", 1));
-        userList.add(new UserLoginRes(3, "hhh", "昵称", "头像", "重庆", 1));
-        userList.add(new UserLoginRes(4, "hhh", "昵称", "头像", "重庆", 1));
-        userList.add(new UserLoginRes(5, "hhh", "昵称", "头像", "重庆", 1));
-
-        for (int i = 0; i < userList.size(); i++) {
-            bulkRequest.add(new IndexRequest("smart_index")
-                    .id("" + (i + 1))
-                    .source(JSON.toJSONString(userList.get(i)), XContentType.JSON));
-        }
-
-        client.bulk(bulkRequest, RequestOptions.DEFAULT);
+//        BulkRequest bulkRequest = new BulkRequest();
+//        bulkRequest.timeout("10s");
+//
+//        List<UserLoginRes> userList = new ArrayList<>();
+//        userList.add(new UserLoginRes(1, "hhh", "昵称", "头像", "重庆", 1));
+//        userList.add(new UserLoginRes(2, "hhh", "昵称", "头像", "重庆", 1));
+//        userList.add(new UserLoginRes(3, "hhh", "昵称", "头像", "重庆", 1));
+//        userList.add(new UserLoginRes(4, "hhh", "昵称", "头像", "重庆", 1));
+//        userList.add(new UserLoginRes(5, "hhh", "昵称", "头像", "重庆", 1));
+//
+//        for (int i = 0; i < userList.size(); i++) {
+//            bulkRequest.add(new IndexRequest("smart_index")
+//                    .id("" + (i + 1))
+//                    .source(JSON.toJSONString(userList.get(i)), XContentType.JSON));
+//        }
+//
+//        client.bulk(bulkRequest, RequestOptions.DEFAULT);
     }
 
     // 查询

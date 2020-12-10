@@ -2,6 +2,7 @@ package com.jgxq.front.controller;
 
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jgxq.common.dto.TeamInfos;
@@ -66,9 +67,7 @@ public class TeamController {
 
     @DeleteMapping("{id}")
     public ResponseMessage deleteTeamById(@PathVariable("id") Integer id) {
-        UpdateWrapper<Team> teamUpdate = new UpdateWrapper<>();
-        teamUpdate.eq("id",id).set("status", DeleteEnum.DELETE.getValue());
-        boolean flag = teamService.update(teamUpdate);
+        boolean flag = teamService.removeById(id);
         return new ResponseMessage(flag);
     }
 
@@ -105,6 +104,9 @@ public class TeamController {
     @GetMapping("infos/{id}")
     public ResponseMessage getTeamById(@PathVariable("id") Integer id) {
         Team team = teamService.getById(id);
+        if(team == null){
+            return new ResponseMessage(team);
+        }
         TeamRes teamRes = new TeamRes();
         BeanUtils.copyProperties(team, teamRes);
         TeamInfos infos = JSON.parseObject(team.getInfos(), TeamInfos.class);

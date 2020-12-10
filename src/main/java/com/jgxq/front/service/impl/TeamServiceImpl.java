@@ -3,6 +3,7 @@ package com.jgxq.front.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jgxq.common.res.TeamBasicRes;
+import com.jgxq.core.resp.ResponseMessage;
 import com.jgxq.front.define.DeleteEnum;
 import com.jgxq.front.entity.Team;
 import com.jgxq.front.mapper.TeamMapper;
@@ -35,8 +36,7 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, Team> implements Te
 
         Page<Team> page = new Page<>(pageNum, pageSize);
         QueryWrapper<Team> wrapper = new QueryWrapper<>();
-        wrapper.select("id","name","logo")
-                .eq("status", DeleteEnum.NORMAL.getValue());
+        wrapper.select("id","name","logo");
 
         teamMapper.selectPage(page,null);
 
@@ -51,7 +51,6 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, Team> implements Te
         QueryWrapper<Team> userQuery = new QueryWrapper<>();
         userQuery.select("id","name","logo"
                 ,"(SELECT count(id) from user as u where team.id = u.home_team) as fans ")
-                .eq("status", DeleteEnum.NORMAL.getValue())
                 .orderByDesc("fans");
         teamMapper.selectPage(page, userQuery);
         return page;
@@ -60,6 +59,9 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, Team> implements Te
     @Override
     public TeamBasicRes getBasicTeamById(Integer id) {
         Team team = teamMapper.selectById(id);
+        if(team == null){
+            return null;
+        }
         TeamBasicRes teamRes = new TeamBasicRes();
         BeanUtils.copyProperties(team,teamRes);
         return teamRes;
