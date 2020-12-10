@@ -2,11 +2,15 @@ package com.jgxq.front.controller;
 
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.jgxq.common.dto.TeamInfos;
 import com.jgxq.common.req.TeamReq;
 import com.jgxq.common.res.TeamBasicRes;
+import com.jgxq.common.res.TeamRes;
 import com.jgxq.core.resp.PageResponse;
 import com.jgxq.core.resp.ResponseMessage;
+import com.jgxq.front.define.DeleteEnum;
 import com.jgxq.front.define.TeamSortEnum;
 import com.jgxq.front.entity.Team;
 import com.jgxq.front.service.TeamService;
@@ -62,7 +66,9 @@ public class TeamController {
 
     @DeleteMapping("{id}")
     public ResponseMessage deleteTeamById(@PathVariable("id") Integer id) {
-        boolean flag = teamService.removeById(id);
+        UpdateWrapper<Team> teamUpdate = new UpdateWrapper<>();
+        teamUpdate.eq("id",id).set("status", DeleteEnum.DELETE.getValue());
+        boolean flag = teamService.update(teamUpdate);
         return new ResponseMessage(flag);
     }
 
@@ -89,4 +95,21 @@ public class TeamController {
         return new ResponseMessage(new PageResponse<TeamBasicRes>(res, pageNum, pageSize, page.getTotal()));
 
     }
+
+    @GetMapping("{id}")
+    public ResponseMessage getBasicTeamById(@PathVariable("id") Integer id) {
+        TeamBasicRes team = teamService.getBasicTeamById(id);
+        return new ResponseMessage(team);
+    }
+
+    @GetMapping("infos/{id}")
+    public ResponseMessage getTeamById(@PathVariable("id") Integer id) {
+        Team team = teamService.getById(id);
+        TeamRes teamRes = new TeamRes();
+        BeanUtils.copyProperties(team, teamRes);
+        TeamInfos infos = JSON.parseObject(team.getInfos(), TeamInfos.class);
+        teamRes.setInfos(infos);
+        return new ResponseMessage(teamRes);
+    }
+
 }

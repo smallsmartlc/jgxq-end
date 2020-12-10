@@ -13,8 +13,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserLoginRes {
 
-    private Integer id;
-
     private String userkey;
 
     private String nickName;
@@ -23,6 +21,6 @@ public class UserLoginRes {
 
     private String city;
 
-    private Integer homeTeam;
+    private TeamBasicRes homeTeam;
 
 }

@@ -6,6 +6,7 @@ import com.jgxq.common.req.UserEmailLoginReq;
 import com.jgxq.common.req.UserFindPasswordReq;
 import com.jgxq.common.req.UserLoginReq;
 import com.jgxq.common.req.UserRegReq;
+import com.jgxq.common.res.TeamBasicRes;
 import com.jgxq.common.res.UserLoginRes;
 import com.jgxq.common.res.UserRegRes;
 import com.jgxq.common.utils.CookieUtils;
@@ -22,6 +23,7 @@ import com.jgxq.front.define.VerificationCodeTypeEnum;
 import com.jgxq.front.entity.User;
 import com.jgxq.front.sender.JGMailSender;
 import com.jgxq.front.sender.RedisCache;
+import com.jgxq.front.service.TeamService;
 import com.jgxq.front.service.UserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +59,9 @@ public class AuthController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private TeamService teamService;
 
     @Autowired
     private JGMailSender mailSender;
@@ -118,6 +123,8 @@ public class AuthController {
         response.setHeader("Set-Cookie", response.getHeader("Set-Cookie") + "; SameSite=Lax");
         UserLoginRes userRes = new UserLoginRes();
         BeanUtils.copyProperties(user, userRes);
+        TeamBasicRes team = teamService.getBasicTeamById(user.getHomeTeam());
+        userRes.setHomeTeam(team);
 
         return new ResponseMessage(userRes);
     }
@@ -188,6 +195,8 @@ public class AuthController {
         response.setHeader("Set-Cookie", response.getHeader("Set-Cookie") + "; SameSite=Lax");
         UserLoginRes userRes = new UserLoginRes();
         BeanUtils.copyProperties(user, userRes);
+        TeamBasicRes team = teamService.getBasicTeamById(user.getHomeTeam());
+        userRes.setHomeTeam(team);
 
         return new ResponseMessage(userRes);
     }

@@ -18,4 +18,6 @@ public interface TeamService extends IService<Team> {
     Page<Team> pageTeams(Integer pageNum, Integer pageSize);
 
     Page<Team> pageTeamsByHeat(Integer pageNum, Integer pageSize);
+
+    TeamBasicRes getBasicTeamById(Integer id);
 }
