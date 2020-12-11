@@ -40,11 +40,13 @@ public class Match implements Serializable {
      */
     private Integer homeTeam;
 
+    private Integer homeScore;
     /**
      * 客队
      */
     private Integer visitingTeam;
 
+    private Integer visitingScore;
     /**
      * 比赛时间
      */

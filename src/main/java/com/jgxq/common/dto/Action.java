@@ -13,7 +13,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ActionReq {
+public class Action {
     private String time;
-    private List<ActionInfoReq> infoList;
+    private List<ActionInfo> infoList;
 }

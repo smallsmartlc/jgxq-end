@@ -1,8 +1,7 @@
 package com.jgxq.common.req;
 
-import com.jgxq.common.dto.ActionInfoReq;
-import com.jgxq.common.dto.ActionReq;
-import com.jgxq.common.dto.MatchInfoReq;
+import com.jgxq.common.dto.Action;
+import com.jgxq.common.dto.MatchInfo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -28,13 +27,15 @@ public class MatchReq implements Serializable {
     private String title;
     @NotNull
     private Integer homeTeam;
+    private Integer homeScore;
     @NotNull
     private Integer visitingTeam;
+    private Integer visitingScore;
     @NotNull
     private Date startTime;
     private String link;
     private Integer matchNews;
-    private MatchInfoReq matchInfo;
-    private List<ActionReq> action;
+    private MatchInfo matchInfo;
+    private List<Action> action;
 
 }

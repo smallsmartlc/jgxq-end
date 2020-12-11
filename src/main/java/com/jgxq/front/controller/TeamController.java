@@ -12,6 +12,7 @@ import com.jgxq.core.resp.ResponseMessage;
 import com.jgxq.front.define.TeamSort;
 import com.jgxq.front.entity.Team;
 import com.jgxq.front.service.TeamService;
+import com.jgxq.front.util.ReqUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -37,13 +38,9 @@ public class TeamController {
     private TeamService teamService;
 
     @PostMapping
-    public ResponseMessage addTeam(@RequestBody @Validated TeamReq teamDto) {
+    public ResponseMessage addTeam(@RequestBody @Validated TeamReq teamReq) {
 
-        String info = JSON.toJSONString(teamDto.getInfos());
-        Team team = new Team();
-        BeanUtils.copyProperties(teamDto, team);
-        team.setInfos(info);
-
+        Team team = ReqUtils.teamReqToTeam(teamReq);
         teamService.save(team);
 
         return new ResponseMessage(team.getId());
@@ -51,11 +48,8 @@ public class TeamController {
 
     @PutMapping("{id}")
     public ResponseMessage updateTeamInfo(@PathVariable("id") Integer id,
-                                          @RequestBody @Validated TeamReq teamDto) {
-        String info = JSON.toJSONString(teamDto.getInfos());
-        Team team = new Team();
-        BeanUtils.copyProperties(teamDto, team);
-        team.setInfos(info);
+                                          @RequestBody @Validated TeamReq teamReq) {
+        Team team = ReqUtils.teamReqToTeam(teamReq);
         team.setId(id);
         boolean flag = teamService.updateById(team);
 

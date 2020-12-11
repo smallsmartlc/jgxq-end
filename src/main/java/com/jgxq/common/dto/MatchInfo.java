@@ -9,14 +9,14 @@ import java.util.List;
  * @since 2020-12-11
  **/
 @Data
-public class MatchInfoReq {
+public class MatchInfo {
     //主队首发
-    List<MatchPlayerReq> homeLineUp;
+    List<MatchPlayer> homeLineUp;
     //主队替补
-    List<MatchPlayerReq> homeSubstitute;
+    List<MatchPlayer> homeSubstitute;
     //客队首发
-    List<MatchPlayerReq> visitingLineUp;
+    List<MatchPlayer> visitingLineUp;
     //客队替补
-    List<MatchPlayerReq> visitingSubstitute;
+    List<MatchPlayer> visitingSubstitute;
 
 }

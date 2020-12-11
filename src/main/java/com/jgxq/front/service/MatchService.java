@@ -1,7 +1,11 @@
 package com.jgxq.front.service;
 
+import com.jgxq.common.res.MatchBasicRes;
 import com.jgxq.front.entity.Match;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +17,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface MatchService extends IService<Match> {
 
+    List<MatchBasicRes> listMatches(Integer size, Date start);
 }
