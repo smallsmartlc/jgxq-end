@@ -1,6 +1,7 @@
 package com.jgxq.front.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.jgxq.common.req.MatchReq;
 import com.jgxq.common.res.MatchBasicRes;
 import com.jgxq.common.res.MatchRes;
@@ -10,6 +11,7 @@ import com.jgxq.core.resp.ResponseMessage;
 import com.jgxq.front.entity.Match;
 import com.jgxq.front.service.MatchService;
 import com.jgxq.front.service.TeamService;
+import com.jgxq.front.service.impl.MatchServiceImpl;
 import com.jgxq.front.service.impl.TeamServiceImpl;
 import com.jgxq.front.util.ReqUtils;
 import com.jgxq.front.util.ResUtils;
@@ -91,6 +93,13 @@ public class MatchController {
         }
         List<MatchBasicRes> res = matchService.listMatches(size, start);
 
+        return new ResponseMessage(res);
+    }
+
+    @GetMapping("/home/{size}")
+    public ResponseMessage homeMatches(@PathVariable("size") Integer size) {
+
+        List<MatchBasicRes> res = matchService.homeMatches(size);
         return new ResponseMessage(res);
     }
 

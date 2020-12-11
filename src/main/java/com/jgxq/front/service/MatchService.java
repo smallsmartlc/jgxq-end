@@ -18,4 +18,6 @@ import java.util.List;
 public interface MatchService extends IService<Match> {
 
     List<MatchBasicRes> listMatches(Integer size, Date start);
+
+    List<MatchBasicRes> homeMatches(Integer size);
 }

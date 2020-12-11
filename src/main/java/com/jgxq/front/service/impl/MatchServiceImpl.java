@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author smallsmart
@@ -38,11 +38,29 @@ public class MatchServiceImpl extends ServiceImpl<MatchMapper, Match> implements
     @Override
     public List<MatchBasicRes> listMatches(Integer size, Date start) {
         QueryWrapper<Match> matchQuery = new QueryWrapper<>();
-        matchQuery.select("id","title","home_team","visiting_team","start_time","link")
-                .ge("start_time",start).last("limit "+size);
+
+        matchQuery.select("id", "title", "home_team", "visiting_team", "start_time", "link","home_score","visiting_score")
+                .ge("start_time", start).last("limit " + size);
         List<Match> matchList = matchMapper.selectList(matchQuery);
+
+        List<MatchBasicRes> res = matchListToBasicRes(matchList);
+
+        return res;
+    }
+
+    @Override
+    public List<MatchBasicRes> homeMatches(Integer size) {
+        QueryWrapper<Match> matchQuery = new QueryWrapper<>();
+        matchQuery.select("id", "title", "home_team", "visiting_team", "start_time", "link","home_score","visiting_score")
+                .orderByAsc("abs(TIMESTAMPDIFF(SECOND,start_time,now()))").last("limit " + size);
+        List<Match> matchList = matchMapper.selectList(matchQuery);
+        List<MatchBasicRes> res = matchListToBasicRes(matchList);
+        return res;
+    }
+
+    private List<MatchBasicRes> matchListToBasicRes(List<Match> matchList){
         Set<Integer> teamIds = new HashSet<>();
-        matchList.forEach(m->{
+        matchList.forEach(m -> {
             teamIds.add(m.getHomeTeam());
             teamIds.add(m.getVisitingTeam());
         });
@@ -56,7 +74,6 @@ public class MatchServiceImpl extends ServiceImpl<MatchMapper, Match> implements
             match.setVisitingTeam(map.get(t.getVisitingTeam()));
             return match;
         }).collect(Collectors.toList());
-
         return res;
     }
 }
