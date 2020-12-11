@@ -4,14 +4,14 @@ package com.jgxq.front.define;
  * @author LuCong
  * @since 2020-12-10
  **/
-public enum StrongFootEnum {
+public enum StrongFoot {
 
     RIGHT("右脚", 0),
     LEFT("左脚",1),
     DOUBLE("双脚",2);
 
     public static String getFootByVal(int value){
-        for (StrongFootEnum foot : values()) {
+        for (StrongFoot foot : values()) {
             if(foot.getValue() == value){
                 return foot.getFoot();
             }
@@ -27,7 +27,7 @@ public enum StrongFootEnum {
         return value;
     }
 
-    StrongFootEnum(String foot, int value) {
+    StrongFoot(String foot, int value) {
         this.foot = foot;
         this.value = value;
     }

@@ -4,13 +4,13 @@ package com.jgxq.front.define;
  * @author LuCong
  * @since 2020-12-07
  **/
-public enum KeyLengthEnum {
+public enum KeyLength {
 
     USER_KEY_LEN(8);
 
     private int length;
 
-    KeyLengthEnum(int length) {
+    KeyLength(int length) {
         this.length = length;
     }
 

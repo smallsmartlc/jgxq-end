@@ -2,8 +2,6 @@ package com.jgxq.front.controller;
 
 
 import com.alibaba.fastjson.JSON;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jgxq.common.dto.TeamInfos;
 import com.jgxq.common.req.TeamReq;
@@ -11,8 +9,7 @@ import com.jgxq.common.res.TeamBasicRes;
 import com.jgxq.common.res.TeamRes;
 import com.jgxq.core.resp.PageResponse;
 import com.jgxq.core.resp.ResponseMessage;
-import com.jgxq.front.define.DeleteEnum;
-import com.jgxq.front.define.TeamSortEnum;
+import com.jgxq.front.define.TeamSort;
 import com.jgxq.front.entity.Team;
 import com.jgxq.front.service.TeamService;
 import org.springframework.beans.BeanUtils;
@@ -74,12 +71,12 @@ public class TeamController {
     @GetMapping("page/{pageNum}/{pageSize}")
     public ResponseMessage PageTeams(@PathVariable("pageNum") Integer pageNum,
                                      @PathVariable("pageSize") Integer pageSize,
-                                     @RequestParam(value = "sort",defaultValue = "NO") TeamSortEnum sort) {
+                                     @RequestParam(value = "sort",defaultValue = "NO") TeamSort sort) {
 
         Page<Team> page = null;
-        if(sort == TeamSortEnum.NO){
+        if(sort == TeamSort.NO){
             page = teamService.pageTeams(pageNum, pageSize);
-        }else if(sort == TeamSortEnum.HEAT){
+        }else if(sort == TeamSort.HEAT){
             page = teamService.pageTeamsByHeat(pageNum, pageSize);
         }
 

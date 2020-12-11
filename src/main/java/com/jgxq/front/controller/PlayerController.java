@@ -9,18 +9,17 @@ import com.jgxq.common.req.PlayerReq;
 import com.jgxq.common.res.PlayerRes;
 import com.jgxq.common.res.PlayerTeamRes;
 import com.jgxq.core.resp.ResponseMessage;
-import com.jgxq.front.define.PositionEnum;
-import com.jgxq.front.define.StrongFootEnum;
+import com.jgxq.front.define.Position;
+import com.jgxq.front.define.StrongFoot;
 import com.jgxq.front.entity.Player;
-import com.jgxq.front.entity.Team;
 import com.jgxq.front.service.PlayerService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -39,7 +38,7 @@ public class PlayerController {
     private PlayerService playerService;
 
     @PostMapping
-    public ResponseMessage addPlayer(@RequestBody PlayerReq playerReq) {
+    public ResponseMessage addPlayer(@RequestBody @Validated PlayerReq playerReq) {
         String infos = JSON.toJSONString(playerReq.getInfos());
 
         Player player = new Player();
@@ -53,7 +52,7 @@ public class PlayerController {
 
     @PutMapping("{id}")
     public ResponseMessage updatePlayer(@PathVariable("id") Integer id,
-                                        @RequestBody PlayerReq playerReq) {
+                                        @RequestBody @Validated PlayerReq playerReq) {
         String infos = JSON.toJSONString(playerReq.getInfos());
 
         Player player = new Player();
@@ -80,8 +79,8 @@ public class PlayerController {
         }
         PlayerRes playerRes = new PlayerRes();
         BeanUtils.copyProperties(player, playerRes);
-        playerRes.setStrongFoot(StrongFootEnum.getFootByVal(player.getStrongFoot()));
-        playerRes.setPosition(PositionEnum.getPositionByVal(player.getPosition()));
+        playerRes.setStrongFoot(StrongFoot.getFootByVal(player.getStrongFoot()));
+        playerRes.setPosition(Position.getPositionByVal(player.getPosition()));
         List<PlayerInfo> infos = JSON.parseArray(player.getInfos(), PlayerInfo.class);
         playerRes.setInfos(infos);
         return new ResponseMessage(playerRes);
@@ -101,7 +100,7 @@ public class PlayerController {
             BeanUtils.copyProperties(player, playerTeam);
             playerTeam.setPosition(player.getPosition().intValue());
             return playerTeam;
-        }).collect(Collectors.groupingBy((playerTeam -> PositionEnum.getPositionByVal(playerTeam.getPosition()))))
+        }).collect(Collectors.groupingBy((playerTeam -> Position.getPositionByVal(playerTeam.getPosition()))))
                 //转为map
                 .forEach((key, value) -> {
                     //遍历map
@@ -109,7 +108,6 @@ public class PlayerController {
                 });
 
         return new ResponseMessage(res);
-
     }
 
 }

@@ -8,7 +8,7 @@ import com.jgxq.common.res.UserRegRes;
 import com.jgxq.common.utils.LoginUtils;
 import com.jgxq.common.utils.PasswordHash;
 import com.jgxq.core.entity.AuthContext;
-import com.jgxq.front.define.KeyLengthEnum;
+import com.jgxq.front.define.KeyLength;
 import com.jgxq.front.entity.User;
 import com.jgxq.front.mapper.UserMapper;
 import com.jgxq.front.service.UserService;
@@ -65,7 +65,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
 
         User user = new User();
-        user.setUserkey(LoginUtils.getRandomUserKey(KeyLengthEnum.USER_KEY_LEN.getLength()));
+        user.setUserkey(LoginUtils.getRandomUserKey(KeyLength.USER_KEY_LEN.getLength()));
         BeanUtils.copyProperties(userReq,user);
 
         userMapper.insert(user);

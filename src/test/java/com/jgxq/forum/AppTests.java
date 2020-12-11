@@ -1,6 +1,6 @@
 package com.jgxq.forum;
 
-import com.jgxq.front.define.VerificationCodeTypeEnum;
+import com.jgxq.front.define.VerificationCodeType;
 import com.jgxq.front.sender.JGMailSender;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,7 @@ class AppTests {
 
     @Test
     void MailTest() throws MessagingException {
-        mailSender.sendVerificationCode("1346683197@qq.com","236563", VerificationCodeTypeEnum.FIND);
+        mailSender.sendVerificationCode("1346683197@qq.com","236563", VerificationCodeType.FIND);
     }
 
     @Test

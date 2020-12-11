@@ -4,15 +4,15 @@ package com.jgxq.front.define;
  * @author LuCong
  * @since 2020-12-10
  **/
-public enum PositionEnum {
+public enum Position {
 
     GK("门将", 0),
-    B("后卫",1),
-    M("中场",1),
-    F("前锋",3);
+    DB("后卫",1),
+    AM("中场",2),
+    AF("前锋",3);
 
     public static String getPositionByVal(int value){
-        for (PositionEnum position : values()) {
+        for (Position position : values()) {
             if(position.getValue() == value){
                 return position.getPosition();
             }
@@ -28,7 +28,7 @@ public enum PositionEnum {
         return value;
     }
 
-    PositionEnum(String foot, int value) {
+    Position(String foot, int value) {
         this.position = foot;
         this.value = value;
     }

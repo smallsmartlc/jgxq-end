@@ -75,7 +75,7 @@ public class TeamworkGlobalExceptionHandler {
         return new ErrorMessage(CommonErrorCode.DATA_INTEGRITY_VIOLATION_EXCEPTION.getErrorCode(), exception.getMessage());
     }
 
-    @ExceptionHandler({DataAccessException.class})
+//    @ExceptionHandler({DataAccessException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorMessage onDataAccessException(HttpServletRequest request, HttpServletResponse response, Exception exception) {
 

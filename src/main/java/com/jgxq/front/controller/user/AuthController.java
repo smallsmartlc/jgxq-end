@@ -12,14 +12,13 @@ import com.jgxq.common.res.UserRegRes;
 import com.jgxq.common.utils.CookieUtils;
 import com.jgxq.common.utils.JwtUtil;
 import com.jgxq.common.utils.LoginUtils;
-import com.jgxq.core.anotation.AllowAccess;
 import com.jgxq.core.anotation.UserPermissionConf;
 import com.jgxq.core.enums.CommonErrorCode;
 import com.jgxq.core.enums.UserPermissionType;
 import com.jgxq.core.exception.SmartException;
 import com.jgxq.core.resp.ResponseMessage;
 import com.jgxq.front.define.ForumErrorCode;
-import com.jgxq.front.define.VerificationCodeTypeEnum;
+import com.jgxq.front.define.VerificationCodeType;
 import com.jgxq.front.entity.User;
 import com.jgxq.front.sender.JGMailSender;
 import com.jgxq.front.sender.RedisCache;
@@ -28,7 +27,6 @@ import com.jgxq.front.service.UserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,7 +34,6 @@ import javax.mail.MessagingException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import java.util.concurrent.TimeUnit;
 
@@ -71,9 +68,9 @@ public class AuthController {
 
     @PostMapping("getCode/{email}/{type}")
     public ResponseMessage getCode(@PathVariable("email") @Email(message = "邮箱地址不合法!") String email,
-                                   @PathVariable("type") VerificationCodeTypeEnum type) {
+                                   @PathVariable("type") VerificationCodeType type) {
 
-        if (type != VerificationCodeTypeEnum.REG) {
+        if (type != VerificationCodeType.REG) {
             User user = userService.getUserByPK("email", email);
             if (user == null) {
                 return new ResponseMessage(ForumErrorCode.Email_Send_Error, "该账号不存在");
@@ -133,7 +130,7 @@ public class AuthController {
     @PostMapping("register")
     public ResponseMessage register(@RequestBody @Validated UserRegReq userReq) {
 
-        String key = LoginUtils.emailToRedisKey(userReq.getEmail(), VerificationCodeTypeEnum.REG);
+        String key = LoginUtils.emailToRedisKey(userReq.getEmail(), VerificationCodeType.REG);
         String verifyCode = cache.get(key, String.class);
         if (verifyCode == null) {
             return new ResponseMessage(CommonErrorCode.BAD_PARAMETERS.getErrorCode(), "验证码不存在或已过期");
@@ -165,7 +162,7 @@ public class AuthController {
     public ResponseMessage emailLogin(@RequestBody @Validated UserEmailLoginReq userReq,
                                       HttpServletRequest request,
                                       HttpServletResponse response) {
-        String verifyCode = cache.get(LoginUtils.emailToRedisKey(userReq.getEmail(), VerificationCodeTypeEnum.LOG), String.class);
+        String verifyCode = cache.get(LoginUtils.emailToRedisKey(userReq.getEmail(), VerificationCodeType.LOG), String.class);
         if (verifyCode == null) {
             return new ResponseMessage(CommonErrorCode.BAD_PARAMETERS.getErrorCode(), "验证码不存在或已过期");
         }
@@ -203,7 +200,7 @@ public class AuthController {
 
     @PostMapping("findPassword")
     public ResponseMessage findPassword(@RequestBody @Validated UserFindPasswordReq userReq) {
-        String key = LoginUtils.emailToRedisKey(userReq.getEmail(), VerificationCodeTypeEnum.FIND);
+        String key = LoginUtils.emailToRedisKey(userReq.getEmail(), VerificationCodeType.FIND);
         String verifyCode = cache.get(key, String.class);
         if (verifyCode == null) {
             return new ResponseMessage(CommonErrorCode.BAD_PARAMETERS.getErrorCode(), "验证码不存在或已过期");
