@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.jgxq.common.req.UserFindPasswordReq;
 import com.jgxq.common.req.UserRegReq;
+import com.jgxq.common.res.AuthorRes;
 import com.jgxq.common.res.UserRegRes;
 import com.jgxq.common.utils.LoginUtils;
 import com.jgxq.common.utils.PasswordHash;
@@ -98,7 +99,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return user;
     }
 
-
+    public AuthorRes getAuthorInfo(String userKey){
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.select("userkey","nick_name")
+                .eq("userkey",userKey);
+        User user = userMapper.selectOne(wrapper);
+        AuthorRes res = new AuthorRes();
+        res.setNickName(user.getNickName());
+        res.setUserkey(userKey);
+        return res;
+    }
 
     public AuthContext getAuthContextByKey(HttpServletRequest request, String userkey) {
         User user = new User();

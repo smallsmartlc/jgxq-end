@@ -45,9 +45,9 @@ public class MatchController {
     public ResponseMessage addMatch(@RequestBody @Validated MatchReq matchReq) {
 
         Match match = ReqUtils.matchReqToMatch(matchReq);
-        boolean flag = matchService.save(match);
+        matchService.save(match);
 
-        return new ResponseMessage(flag);
+        return new ResponseMessage(match.getId());
     }
 
     @PutMapping("{id}")
