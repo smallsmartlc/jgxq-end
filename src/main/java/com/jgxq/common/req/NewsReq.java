@@ -1,10 +1,8 @@
 package com.jgxq.common.req;
 
-import com.jgxq.common.dto.TagInfo;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.Set;
 
@@ -35,7 +33,7 @@ public class NewsReq {
     /**
      * 存储tag
      */
-    private Set<TagInfo> tags;
+    private Set<TagReq> tags;
 
     private Date createAt;
 

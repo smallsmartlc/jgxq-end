@@ -1,4 +1,4 @@
-package com.jgxq.common.dto;
+package com.jgxq.common.req;
 
 import lombok.Data;
 
@@ -7,7 +7,7 @@ import lombok.Data;
  * @since 2020-12-12
  **/
 @Data
-public class TagInfo {
+public class TagReq {
     private Integer objectId;
     private Integer type;
 }

@@ -1,31 +1,32 @@
 package com.jgxq.front.controller;
 
 
-import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.jgxq.common.dto.TagInfo;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.jgxq.common.dto.NewsHit;
 import com.jgxq.common.req.NewsReq;
 import com.jgxq.common.res.AuthorRes;
+import com.jgxq.common.res.NewsBasicRes;
 import com.jgxq.common.res.NewsRes;
 import com.jgxq.common.res.TagRes;
-import com.jgxq.common.utils.DateUtils;
 import com.jgxq.core.anotation.UserPermissionConf;
 import com.jgxq.core.enums.CommonErrorCode;
 import com.jgxq.core.resp.ResponseMessage;
-import com.jgxq.front.define.ForumErrorCode;
 import com.jgxq.front.entity.News;
-import com.jgxq.front.service.NewsService;
+import com.jgxq.front.entity.Tag;
+import com.jgxq.front.service.TagService;
 import com.jgxq.front.service.impl.NewsServiceImpl;
 import com.jgxq.front.service.impl.TeamServiceImpl;
 import com.jgxq.front.service.impl.UserServiceImpl;
-import com.jgxq.front.util.ResUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -49,38 +50,58 @@ public class NewsController {
     @Autowired
     private UserServiceImpl userService;
 
+    @Autowired
+    private TagService tagService;
+
     @PostMapping
     public ResponseMessage addNews(@RequestBody @Validated NewsReq newsReq,
                                    @RequestAttribute("userKey") String userKey) {
-        String tags = JSON.toJSONString(newsReq.getTags());
         News news = new News();
         BeanUtils.copyProperties(newsReq, news);
-        news.setTag(tags);
         news.setAuthor(userKey);
         newsService.save(news);
+        List<Tag> tagList = newsReq.getTags().stream().map(t -> {
+            Tag tag = new Tag();
+            BeanUtils.copyProperties(t, tag);
+            tag.setNewsId(news.getId());
+            return tag;
+        }).collect(Collectors.toList());
+        tagService.saveBatch(tagList);
         return new ResponseMessage(news.getId());
     }
 
     @PutMapping("{id}")
-    private ResponseMessage updateNews(@PathVariable("id") Integer id,
+    @Transactional
+    public ResponseMessage updateNews(@PathVariable("id") Integer id,
                                        @RequestBody @Validated NewsReq newsReq) {
-        String tags = JSON.toJSONString(newsReq.getTags());
         News news = new News();
         BeanUtils.copyProperties(newsReq, news);
-        news.setTag(tags);
         news.setId(id);
         boolean flag = newsService.updateById(news);
+        QueryWrapper<Tag> tagQuery = new QueryWrapper<>();
+        tagQuery.eq("news_id",id);
+        tagService.remove(tagQuery);
+        List<Tag> tagList = newsReq.getTags().stream().map(t -> {
+            Tag tag = new Tag();
+            BeanUtils.copyProperties(t, tag);
+            tag.setNewsId(news.getId());
+            return tag;
+        }).collect(Collectors.toList());
+        tagService.saveBatch(tagList);
         return new ResponseMessage(flag);
     }
 
     @DeleteMapping("{id}")
-    private ResponseMessage updateNews(@PathVariable("id") Integer id) {
+    public ResponseMessage deleteNews(@PathVariable("id") Integer id) {
         boolean flag = newsService.removeById(id);
+        QueryWrapper<Tag> tagQuery = new QueryWrapper<>();
+        tagQuery.eq("news_id",id);
+        tagService.remove(tagQuery);
         return new ResponseMessage(flag);
     }
 
     @GetMapping("{id}")
-    private ResponseMessage getNews(@PathVariable("id") Integer id) {
+    public ResponseMessage getNews(@PathVariable("id") Integer id) {
         QueryWrapper<News> newsQuery = new QueryWrapper<>();
         newsQuery.eq("id",id)
                 .le("create_at", new Date(System.currentTimeMillis()));
@@ -89,14 +110,26 @@ public class NewsController {
             return new ResponseMessage(CommonErrorCode.BAD_PARAMETERS.getErrorCode(),"没有该记录");
         }
         AuthorRes authorInfo = userService.getAuthorInfo(news.getAuthor());
-        TagRes tagRes = newsService.tagInfosToRes(news.getTag());
+        TagRes tagRes = tagService.getTags(id);
         NewsRes newsRes = new NewsRes();
         BeanUtils.copyProperties(news,newsRes);
         newsRes.setAuthor(authorInfo);
         newsRes.setTag(tagRes);
 
+        NewsHit hit = newsService.getHitById(news.getId());
+        newsRes.setHit(hit);
+
         return new ResponseMessage(newsRes);
     }
 
+    @GetMapping("page/{pageNum}/{pageSize}")
+    public ResponseMessage pageNews(@PathVariable("pageNum") Integer pageNum,
+                                     @PathVariable("pageSize") Integer pageSize){
+
+        Page<NewsBasicRes> list = newsService.pageNews(pageNum,pageSize);
+        return new ResponseMessage(list);
+    }
+
+    //todo 根据tag查询
 
 }

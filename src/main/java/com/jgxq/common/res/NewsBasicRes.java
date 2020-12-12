@@ -14,30 +14,12 @@ import java.util.Date;
  * @since 2020-12-12
  */
 @Data
-public class NewsRes{
+public class NewsBasicRes {
 
     private Integer id;
     private String title;
 
     private String cover;
 
-    /**
-     * 作者userkey
-     */
-    private AuthorRes author;
-
-    /**
-     * 文章内容
-     */
-    private String text;
-
-    /**
-     * 存储tag
-     */
-    private TagRes tag;
-
-    private Date createAt;
-
     private NewsHit hit;
-
 }

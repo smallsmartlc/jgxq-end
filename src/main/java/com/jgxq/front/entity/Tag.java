@@ -1,7 +1,6 @@
 package com.jgxq.front.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import java.util.Date;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
 import lombok.Data;
@@ -17,38 +16,20 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class News implements Serializable {
+public class Tag implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    /**
-     * 标题-64个字
-     */
-    private String title;
+    private Integer objectId;
 
     /**
-     * 封面图片
+     * 0-球队 1- 球员
      */
-    private String cover;
+    private Byte objectType;
 
-    /**
-     * 作者userkey
-     */
-    private String author;
-
-    /**
-     * 文章内容
-     */
-    private String text;
-
-    private Byte status;
-
-    private Date createAt;
-
-    private Date updateAt;
-
+    private Integer newsId;
 
 }
