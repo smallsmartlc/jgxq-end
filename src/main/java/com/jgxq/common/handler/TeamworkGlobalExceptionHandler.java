@@ -4,11 +4,10 @@ import com.jgxq.core.enums.CommonErrorCode;
 import com.jgxq.core.exception.SmartException;
 import com.jgxq.core.resp.ErrorMessage;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -75,11 +74,20 @@ public class TeamworkGlobalExceptionHandler {
         return new ErrorMessage(CommonErrorCode.DATA_INTEGRITY_VIOLATION_EXCEPTION.getErrorCode(), exception.getMessage());
     }
 
-//    @ExceptionHandler({DataAccessException.class})
+    @ExceptionHandler({DataAccessException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorMessage onDataAccessException(HttpServletRequest request, HttpServletResponse response, Exception exception) {
+        String message = exception.getMessage();
+        String resString = message.substring(message.lastIndexOf(":") + 1);
+        return new ErrorMessage(CommonErrorCode.INTERNAL_SERVER_ERROR.getErrorCode(), "Data Access error,message:" + resString);
+    }
 
-        return new ErrorMessage(CommonErrorCode.INTERNAL_SERVER_ERROR.getErrorCode(), "Data Access error");
+    @ExceptionHandler({DuplicateKeyException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorMessage DuplicateKeyException(HttpServletRequest request, HttpServletResponse response, Exception exception) {
+        String message = exception.getMessage();
+        String resString = message.substring(message.lastIndexOf(":") + 1);
+        return new ErrorMessage(CommonErrorCode.INTERNAL_SERVER_ERROR.getErrorCode(), "Data Access error,message:" + resString);
     }
 
     @ExceptionHandler({NumberFormatException.class})

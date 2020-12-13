@@ -4,12 +4,14 @@ package com.jgxq.front.define;
  * @author LuCong
  * @since 2020-12-12
  **/
-public enum  TagType {
+public enum InteractionType {
 
-    TEAM(0),
-    PLAYER(1);
+    NEWS(0),
+    TALK(1),
+    COMMENT(2);
 
-    TagType(int value) {
+
+    InteractionType(int value) {
         this.value = value;
     }
 

@@ -13,8 +13,12 @@ public class NewsHit {
 
     private Integer thumbs;
 
-    private Integer Comments;
+    private Integer comments;
 
     private Integer collects;
+
+    private boolean thumb;
+    private boolean comment;
+    private boolean collect;
 
 }
