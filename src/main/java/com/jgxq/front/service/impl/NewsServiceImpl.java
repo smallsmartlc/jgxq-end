@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jgxq.common.dto.NewsHit;
 import com.jgxq.common.req.TagReq;
 import com.jgxq.common.res.*;
+import com.jgxq.front.define.CommentType;
 import com.jgxq.front.define.InteractionType;
 import com.jgxq.front.define.TagType;
 import com.jgxq.front.entity.Collect;
@@ -118,7 +119,7 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News> implements Ne
         }
         QueryWrapper<News> newsQuery = new QueryWrapper<>();
         newsQuery.select("id",
-                "(select count(*) from comment where comment.object_id = news.id) as comments")
+                "(select count(*) from comment where comment.object_id = news.id and comment.type = "+ CommentType.NEWS.getValue() +") as comments")
                 .in("id", ids);
 
         List<Map<String, Object>> maps = newsMapper.selectMaps(newsQuery);

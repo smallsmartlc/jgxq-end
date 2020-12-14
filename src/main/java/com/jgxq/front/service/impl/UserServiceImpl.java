@@ -6,8 +6,8 @@ import com.jgxq.common.req.UserFindPasswordReq;
 import com.jgxq.common.req.UserRegReq;
 import com.jgxq.common.res.AuthorRes;
 import com.jgxq.common.res.TeamBasicRes;
+import com.jgxq.common.res.UserBasicRes;
 import com.jgxq.common.res.UserLoginRes;
-import com.jgxq.common.res.UserRegRes;
 import com.jgxq.common.utils.LoginUtils;
 import com.jgxq.common.utils.PasswordHash;
 import com.jgxq.core.entity.AuthContext;
@@ -64,7 +64,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public UserRegRes addUser(UserRegReq userReq) {
+    public String addUser(UserRegReq userReq) {
 
         try {
             userReq.setPassword(PasswordHash.createHash(userReq.getPassword()));
@@ -77,11 +77,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         BeanUtils.copyProperties(userReq, user);
 
         userMapper.insert(user);
-        UserRegRes userRes = new UserRegRes();
-        userRes.setId(user.getId());
-        userRes.setUserkey(user.getUserkey());
-
-        return userRes;
+        return user.getUserkey();
     }
 
     @Override
@@ -106,6 +102,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return user;
     }
 
+    public UserLoginRes userToLoginRes(User user) {
+        TeamBasicRes team = teamService.getBasicTeamById(user.getHomeTeam());
+        UserLoginRes userRes = new UserLoginRes();
+        BeanUtils.copyProperties(user,userRes);
+        userRes.setHomeTeam(team);
+        return userRes;
+    }
+
     public List<UserLoginRes> getUserInfoByKeyList(Collection<String> userkeyList) {
         if(userkeyList.isEmpty()){
             return Collections.emptyList();
@@ -123,6 +127,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             res.setHomeTeam(teamMap.get(u.getId()));
             return res;
         }).collect(Collectors.toList());
+        return resList;
+    }
+
+    public List<UserBasicRes> getUserBasicByKeyList(Collection<String> userkeyList){
+        QueryWrapper<User> userQuery = new QueryWrapper<>();
+        userQuery.select("userkey","nick_name","head_image")
+                .in("userkey",userkeyList);
+        List<User> userList = userMapper.selectList(userQuery);
+        List<UserBasicRes> resList = userList.stream().map(u -> {
+            UserBasicRes res = new UserBasicRes();
+            BeanUtils.copyProperties(u, res);
+            return res;
+        }).collect(Collectors.toList());
+
         return resList;
     }
 

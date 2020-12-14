@@ -7,7 +7,10 @@ import lombok.Data;
  * @since 2020-12-07
  **/
 @Data
-public class UserRegRes {
-    private Integer id;
+public class UserBasicRes {
     private String userkey;
+
+    private String nickName;
+
+    private String headImage;
 }

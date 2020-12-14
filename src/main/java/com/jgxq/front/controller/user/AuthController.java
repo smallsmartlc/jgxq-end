@@ -8,7 +8,6 @@ import com.jgxq.common.req.UserLoginReq;
 import com.jgxq.common.req.UserRegReq;
 import com.jgxq.common.res.TeamBasicRes;
 import com.jgxq.common.res.UserLoginRes;
-import com.jgxq.common.res.UserRegRes;
 import com.jgxq.common.utils.CookieUtils;
 import com.jgxq.common.utils.JwtUtil;
 import com.jgxq.common.utils.LoginUtils;
@@ -149,13 +148,13 @@ public class AuthController {
             return new ResponseMessage(ForumErrorCode.User_Exists.getErrorCode(), "用户已存在");
         }
 
-        UserRegRes userRes = userService.addUser(userReq);
+        String userKey = userService.addUser(userReq);
 
-        if (userRes == null) {
+        if (userKey == null) {
             return new ResponseMessage(CommonErrorCode.UNKNOWN_ERROR.getErrorCode(), "注册失败");
         }
         cache.delete(key);
-        return new ResponseMessage(userRes);
+        return new ResponseMessage(userKey);
     }
 
     @PostMapping("emailLogin")
