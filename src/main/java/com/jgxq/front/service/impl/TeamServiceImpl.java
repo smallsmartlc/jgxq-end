@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -73,6 +74,8 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, Team> implements Te
     }
 
     public List<TeamBasicRes> getBasicTeamByIds(Collection<Integer> ids){
+
+        if(ids.isEmpty()) return Collections.emptyList();
 
         QueryWrapper<Team> teamQuery = new QueryWrapper<>();
         teamQuery.select("id","name","logo").in("id",ids);

@@ -53,8 +53,6 @@ public class JwtLoginInterceptor extends HandlerInterceptorAdapter {
             // TODO :暂时先放行,如果后期改的话再调整
             return true;
         }
-        // 这样只要加了注解就会有userkey属性
-
 
         Cookie[] cookies = request.getCookies();
         if (allowAccess != null) {
@@ -135,7 +133,7 @@ public class JwtLoginInterceptor extends HandlerInterceptorAdapter {
     private String getUserKey(Cookie[] cookies, HttpServletResponse response) {
         //放行也拿一下看有没有userkey
         if (cookies == null) {
-            return StringUtils.EMPTY;
+            return null;
         }
         String authHeader = "";
         for (Cookie cookie : cookies) {
@@ -146,14 +144,14 @@ public class JwtLoginInterceptor extends HandlerInterceptorAdapter {
 
         if (StringUtils.isBlank(authHeader)) {
             //cookie消失了
-            return StringUtils.EMPTY;
+            return null;
         }
 
         String userkey = null;
         try {
             userkey = JwtUtil.dealRequests(authHeader);
         } catch (Exception e) {
-            return StringUtils.EMPTY;
+            return null;
         }
         if (StringUtils.isBlank(userkey)) {
             // 错误的token,无法解析userkey
@@ -169,7 +167,7 @@ public class JwtLoginInterceptor extends HandlerInterceptorAdapter {
                     response.addCookie(cookie);
                 }
             }
-            return StringUtils.EMPTY;
+            return null;
         }
         // 现在终于查出一个正常的用户了
         // 将用户信息放进request中

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jgxq.common.req.CommentReq;
 import com.jgxq.common.res.CommentRes;
+import com.jgxq.common.res.ReplyRes;
 import com.jgxq.core.anotation.AllowAccess;
 import com.jgxq.core.anotation.UserPermissionConf;
 import com.jgxq.core.enums.CommonErrorCode;
@@ -61,12 +62,23 @@ public class CommentController {
     @AllowAccess
     private ResponseMessage pageComment(@PathVariable(value = "type") Byte type,
                                         @PathVariable(value = "objId") Integer objectId,
-                                        @RequestAttribute("userKey") String userKey,
+                                        @RequestAttribute(value = "userKey",required = false) String userKey,
                                         @PathVariable("pageNum") Integer pageNum,
                                         @PathVariable("pageSize") Integer pageSize) {
         Page<CommentRes> page = commentService.pageComment(type,objectId,userKey,pageNum,pageSize);
 
         return new ResponseMessage(page);
     }
+
+    @GetMapping("reply/{commentId}/{pageNum}/{pageSize}")
+    private ResponseMessage pageReply(@PathVariable(value = "commentId") Integer commentId,
+                                      @PathVariable("pageNum") Integer pageNum,
+                                      @PathVariable("pageSize") Integer pageSize,
+                                      @RequestAttribute(value = "userKey") String userKey){
+        Page<ReplyRes> page = commentService.pageReply(commentId,pageNum,pageSize,userKey);
+
+        return new ResponseMessage(page);
+    }
+
 
 }

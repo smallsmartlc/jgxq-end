@@ -16,7 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestController {
 
     @RequestMapping("/test")
-    public ResponseMessage getSomething(@RequestAttribute("userKey")String userKey){
+    @AllowAccess
+    public ResponseMessage getSomething(@RequestAttribute(value = "userKey",required = false)String userKey){
 
         return new ResponseMessage("hhhhh");
     }

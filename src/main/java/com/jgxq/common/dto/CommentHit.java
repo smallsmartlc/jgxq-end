@@ -14,6 +14,5 @@ public class CommentHit {
     private Integer thumbs;
     private Integer comments;
     private boolean thumb;
-    private boolean comment;
 
 }

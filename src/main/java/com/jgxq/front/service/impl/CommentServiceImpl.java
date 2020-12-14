@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jgxq.common.dto.CommentHit;
 import com.jgxq.common.dto.CommentHitDto;
 import com.jgxq.common.res.CommentRes;
+import com.jgxq.common.res.ReplyRes;
 import com.jgxq.common.res.UserLoginRes;
 import com.jgxq.front.define.InteractionType;
 import com.jgxq.front.entity.Comment;
@@ -20,11 +21,11 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static org.apache.ibatis.ognl.OgnlOps.in;
 
 /**
  * <p>
@@ -56,6 +57,11 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         Page<Comment> commentPage = commentMapper.selectPage(page, commentQuery);
 
         List<Comment> records = commentPage.getRecords();
+
+        if (records.isEmpty()) {
+            return null;
+        }
+
         List<Integer> parentIds = records.stream()
                 .map(Comment::getId).collect(Collectors.toList());
         //获取点赞和评论数
@@ -77,19 +83,12 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         }).collect(Collectors.toMap(CommentHitDto::getId, c -> c));
 
 
-        List<Integer> hasComent = null;
         List<Integer> hasThumb = null;
-        boolean logged = !StringUtils.isBlank(userKey);
+        boolean logged = userKey != null;
         if (logged) {
-            //获取登陆用户是否点赞,评论
-            QueryWrapper<Comment> hasCommentQuery = new QueryWrapper<>();
-            hasCommentQuery.select("id")
-                    .eq("userkey", userKey)
-                    .in("id", parentIds);
-            List<Comment> comments = commentMapper.selectList(hasCommentQuery);
-            hasComent = comments.stream().map(Comment::getObjectId).collect(Collectors.toList());
+            //获取登陆用户是否点赞
             QueryWrapper<Thumb> hasThumbQuery = new QueryWrapper<>();
-            hasCommentQuery.select("object_id")
+            hasThumbQuery.select("object_id")
                     .eq("userkey", userKey)
                     .eq("type", InteractionType.COMMENT.getValue())
                     .in("object_id", parentIds);
@@ -104,7 +103,6 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 
 
         List<Integer> finalHasThumb = hasThumb;
-        List<Integer> finalHasComent = hasComent;//这两行为什么要这么做改天要研究一下
         List<CommentRes> result = records.stream().map(c -> {
             CommentHit hit = new CommentHit();
             Integer id = c.getId();
@@ -113,7 +111,6 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
             hit.setThumbs(commentHitDto.getThumbs());
             if (logged) {
                 hit.setThumb(finalHasThumb.contains(id));
-                hit.setComment(finalHasComent.contains(id));
             }
             //TODO : 用户信息赋值
             CommentRes commentRes = new CommentRes();
@@ -127,6 +124,96 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         resPage.setRecords(result);
 
         return resPage;
+    }
+
+    @Override
+    public Page<ReplyRes> pageReply(Integer commentId, Integer pageNum, Integer pageSize, String userKey) {
+        Page<Comment> page = new Page<>(pageNum, pageSize);
+        QueryWrapper<Comment> commentQuery = new QueryWrapper<>();
+        commentQuery.eq("parent_id", commentId);
+        Page<Comment> commentPage = commentMapper.selectPage(page, commentQuery);
+
+        List<Comment> records = commentPage.getRecords();
+
+        if (records.isEmpty()) {
+            return null;
+        }
+        // 获取评论里回复的回复
+        List<Integer> replyIds = records.stream()
+                .map(Comment::getReplyId).collect(Collectors.toList());
+        List<Comment> replyComment = null;
+        if (!replyIds.isEmpty()) {
+            QueryWrapper<Comment> replyQuery = new QueryWrapper<>();
+            replyQuery.in("reply_id", replyIds);
+            replyComment = commentMapper.selectList(replyQuery);
+        } else {
+            replyIds = Collections.EMPTY_LIST;
+        }
+        Map<Integer, Comment> replyMap = replyComment.stream().collect(Collectors.toMap(Comment::getId, c -> c));
+
+
+        List<Integer> commentIds = records.stream()
+                .map(Comment::getId).collect(Collectors.toList());
+        //获取点赞数
+        QueryWrapper<Comment> thumbNumQuery = new QueryWrapper<>();
+        thumbNumQuery.select("id",
+                "(SELECT count(*) from thumb where type = " + InteractionType.COMMENT.getValue() + " and object_id = comment.id) as thumbs")
+                .in("id", commentIds);
+        List<Map<String, Object>> thumbNums = commentMapper.selectMaps(thumbNumQuery);
+        Map<Integer, Integer> thumbsMap = thumbNums
+                .stream().collect(Collectors.toMap(m -> Integer.parseInt(m.get("id").toString()),
+                        m -> Integer.parseInt(m.get("thumbs").toString())));
+
+        List<Integer> hasThumb = null;
+        boolean logged = userKey != null;
+        if (logged) {
+            //获取登陆用户是否点赞,评论
+            QueryWrapper<Thumb> hasThumbQuery = new QueryWrapper<>();
+            hasThumbQuery.select("object_id")
+                    .eq("userkey", userKey)
+                    .eq("type", InteractionType.COMMENT.getValue())
+                    .in("object_id", commentIds);
+            List<Thumb> thumbs = thumbMapper.selectList(hasThumbQuery);
+            hasThumb = thumbs.stream().map(Thumb::getObjectId).collect(Collectors.toList());
+        }
+
+        // 通过评论的userkey获取用户
+        Set<String> userKeyList = records.stream().map(Comment::getUserkey).collect(Collectors.toSet());
+        Set<String> replyUserKetList = replyComment.stream().map(Comment::getUserkey).collect(Collectors.toSet());
+        userKeyList.addAll(replyUserKetList);
+        List<UserLoginRes> userInfos = userService.getUserInfoByKeyList(userKeyList);
+        Map<String, UserLoginRes> userMap = userInfos.stream().collect(Collectors.toMap(UserLoginRes::getUserkey, u -> u));
+
+
+        List<Integer> finalHasThumb = hasThumb;
+        List<ReplyRes> result = records.stream().map(c -> {
+            ReplyRes replyRes = new ReplyRes();
+            Integer id = c.getId();
+            Integer commentThumbs = thumbsMap.get(id);
+            if (logged) {
+                replyRes.setThumb(finalHasThumb.contains(id));
+            }
+            BeanUtils.copyProperties(c, replyRes);
+            replyRes.setUserkey(userMap.get(c.getUserkey()));
+            replyRes.setThumbs(commentThumbs);
+            if (c.getReplyId() != 0) {
+                Comment comment = replyMap.get(c.getReplyId());
+                CommentRes thisReply = new CommentRes();
+                if (comment != null) {
+                    BeanUtils.copyProperties(comment, thisReply);
+                    thisReply.setUserkey(userMap.get(comment.getUserkey()));
+                }
+                replyRes.setReply(thisReply);
+            }
+            return replyRes;
+        }).collect(Collectors.toList());
+
+        Page<ReplyRes> resPage = new Page<>(commentPage.getCurrent(), commentPage.getSize(), commentPage.getTotal());
+        resPage.setRecords(result);
+
+        return resPage;
+
+
     }
 
 }

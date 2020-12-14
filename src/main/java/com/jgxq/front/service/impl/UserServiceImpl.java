@@ -21,10 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -110,6 +107,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     public List<UserLoginRes> getUserInfoByKeyList(Collection<String> userkeyList) {
+        if(userkeyList.isEmpty()){
+            return Collections.emptyList();
+        }
         QueryWrapper<User> userQuery = new QueryWrapper<>();
         userQuery.in("userkey", userkeyList);
         List<User> users = userMapper.selectList(userQuery);
