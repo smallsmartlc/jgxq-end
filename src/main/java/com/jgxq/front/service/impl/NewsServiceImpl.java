@@ -18,6 +18,7 @@ import com.jgxq.front.mapper.NewsMapper;
 import com.jgxq.front.mapper.ThumbMapper;
 import com.jgxq.front.service.NewsService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.sun.corba.se.spi.ior.ObjectId;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -66,9 +67,8 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News> implements Ne
         Page<News> page = new Page<>(pageNum, pageSize);
         QueryWrapper<News> wrapper = new QueryWrapper<>();
         wrapper.select("id", "title", "cover")
-                .eq("object_type",objectType)
-                .eq("object_id",objectId)
                 .le("create_at", new Date(System.currentTimeMillis()))
+                .gt("(select count(*) from tag where tag.news_id = news.id and tag.object_id = "+ objectId +" and tag.object_type = "+objectType+")",0)
                 .orderByDesc("create_at");
         newsMapper.selectPage(page, wrapper);
         List<NewsBasicRes> newsBasicList = NewsListToBasicRes(page.getRecords());
