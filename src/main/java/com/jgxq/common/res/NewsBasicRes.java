@@ -21,5 +21,5 @@ public class NewsBasicRes {
 
     private String cover;
 
-    private NewsHit hit;
+    private Integer comments;
 }

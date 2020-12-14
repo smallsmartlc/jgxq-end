@@ -18,7 +18,6 @@ public class NewsHit {
     private Integer collects;
 
     private boolean thumb;
-    private boolean comment;
     private boolean collect;
 
 }

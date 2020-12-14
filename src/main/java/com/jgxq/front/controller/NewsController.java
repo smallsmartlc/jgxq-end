@@ -9,6 +9,7 @@ import com.jgxq.common.res.AuthorRes;
 import com.jgxq.common.res.NewsBasicRes;
 import com.jgxq.common.res.NewsRes;
 import com.jgxq.common.res.TagRes;
+import com.jgxq.core.anotation.AllowAccess;
 import com.jgxq.core.anotation.UserPermissionConf;
 import com.jgxq.core.enums.CommonErrorCode;
 import com.jgxq.core.resp.ResponseMessage;
@@ -101,7 +102,9 @@ public class NewsController {
     }
 
     @GetMapping("{id}")
-    public ResponseMessage getNews(@PathVariable("id") Integer id) {
+    @AllowAccess
+    public ResponseMessage getNews(@PathVariable("id") Integer id,
+                                   @RequestAttribute(value = "userKey",required = false) String userKey) {
         QueryWrapper<News> newsQuery = new QueryWrapper<>();
         newsQuery.eq("id",id)
                 .le("create_at", new Date(System.currentTimeMillis()));
@@ -116,13 +119,15 @@ public class NewsController {
         newsRes.setAuthor(authorInfo);
         newsRes.setTag(tagRes);
 
-        NewsHit hit = newsService.getHitById(news.getId());
+        NewsHit hit = newsService.getHitById(news.getId(),userKey);
         newsRes.setHit(hit);
 
         return new ResponseMessage(newsRes);
     }
 
+
     @GetMapping("page/{pageNum}/{pageSize}")
+    @AllowAccess
     public ResponseMessage pageNews(@PathVariable("pageNum") Integer pageNum,
                                      @PathVariable("pageSize") Integer pageSize){
 
@@ -130,6 +135,16 @@ public class NewsController {
         return new ResponseMessage(list);
     }
 
-    //todo 根据tag查询
+    @GetMapping("page/tag/{pageNum}/{pageSize}")
+    @AllowAccess
+    public ResponseMessage pageNews(@PathVariable("pageNum") Integer pageNum,
+                                    @PathVariable("pageSize") Integer pageSize,
+                                        @RequestParam("objectId") Integer objectId,
+                                    @RequestParam("type") Integer objectType){
+
+        Page<NewsBasicRes> list = newsService.pageNewsByTag(pageNum,pageSize,objectId,objectType);
+        return new ResponseMessage(list);
+    }
+
 
 }

@@ -112,7 +112,6 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
             if (logged) {
                 hit.setThumb(finalHasThumb.contains(id));
             }
-            //TODO : 用户信息赋值
             CommentRes commentRes = new CommentRes();
             BeanUtils.copyProperties(c, commentRes);
             commentRes.setUserkey(userMap.get(c.getUserkey()));
