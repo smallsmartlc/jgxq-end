@@ -63,10 +63,10 @@ public class CommentController {
     @AllowAccess
     private ResponseMessage pageComment(@PathVariable(value = "type") Byte type,
                                         @PathVariable(value = "objId") Integer objectId,
-                                        @RequestAttribute(value = "userKey",required = false) String userKey,
+                                        @RequestAttribute(value = "userKey", required = false) String userKey,
                                         @PathVariable("pageNum") Integer pageNum,
                                         @PathVariable("pageSize") Integer pageSize) {
-        Page<CommentRes> page = commentService.pageComment(type,objectId,userKey,pageNum,pageSize);
+        Page<CommentRes> page = commentService.pageComment(type, objectId, userKey, pageNum, pageSize);
 
         return new ResponseMessage(page);
     }
@@ -75,21 +75,21 @@ public class CommentController {
     private ResponseMessage pageReply(@PathVariable(value = "commentId") Integer commentId,
                                       @PathVariable("pageNum") Integer pageNum,
                                       @PathVariable("pageSize") Integer pageSize,
-                                      @RequestAttribute(value = "userKey") String userKey){
-        Page<ReplyRes> page = commentService.pageReply(commentId,pageNum,pageSize,userKey);
+                                      @RequestAttribute(value = "userKey") String userKey) {
+        Page<ReplyRes> page = commentService.pageReply(commentId, pageNum, pageSize, userKey);
 
         return new ResponseMessage(page);
     }
 
     @GetMapping("page/user")
     public ResponseMessage pageComment(@RequestParam(value = "target", required = false) String target,
-                                        @RequestAttribute(value = "userKey") String userKey,
-                                        @RequestParam("pageNum") Integer pageNum,
-                                        @RequestParam("pageSize") Integer pageSize) {
+                                       @RequestAttribute(value = "userKey") String userKey,
+                                       @RequestParam("pageNum") Integer pageNum,
+                                       @RequestParam("pageSize") Integer pageSize) {
         if (target == null) {
             target = userKey;
         }
-        Page<CommentUserRes> page = commentService.pageUserComment(pageNum,pageSize,target,userKey);
+        Page<CommentUserRes> page = commentService.pageUserComment(pageNum, pageSize, target, userKey);
 
         return new ResponseMessage(page);
     }

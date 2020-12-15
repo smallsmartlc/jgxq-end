@@ -1,11 +1,13 @@
 package com.jgxq.front.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.jgxq.common.res.UserFocusRes;
 import com.jgxq.front.entity.Focus;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author smallsmart
@@ -13,4 +15,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface FocusService extends IService<Focus> {
 
+    Page<UserFocusRes> pageToResPage(Page<Focus> page, String userKey);
 }

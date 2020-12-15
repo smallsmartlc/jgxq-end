@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2020-12-15
  */
 @RestController
-@RequestMapping("//focus")
+@RequestMapping("/focus")
 public class FocusController {
 
 }

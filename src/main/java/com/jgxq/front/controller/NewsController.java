@@ -74,13 +74,13 @@ public class NewsController {
     @PutMapping("{id}")
     @Transactional
     public ResponseMessage updateNews(@PathVariable("id") Integer id,
-                                       @RequestBody @Validated NewsReq newsReq) {
+                                      @RequestBody @Validated NewsReq newsReq) {
         News news = new News();
         BeanUtils.copyProperties(newsReq, news);
         news.setId(id);
         boolean flag = newsService.updateById(news);
         QueryWrapper<Tag> tagQuery = new QueryWrapper<>();
-        tagQuery.eq("news_id",id);
+        tagQuery.eq("news_id", id);
         tagService.remove(tagQuery);
         List<Tag> tagList = newsReq.getTags().stream().map(t -> {
             Tag tag = new Tag();
@@ -96,7 +96,7 @@ public class NewsController {
     public ResponseMessage deleteNews(@PathVariable("id") Integer id) {
         boolean flag = newsService.removeById(id);
         QueryWrapper<Tag> tagQuery = new QueryWrapper<>();
-        tagQuery.eq("news_id",id);
+        tagQuery.eq("news_id", id);
         tagService.remove(tagQuery);
         return new ResponseMessage(flag);
     }
@@ -104,22 +104,22 @@ public class NewsController {
     @GetMapping("{id}")
     @AllowAccess
     public ResponseMessage getNews(@PathVariable("id") Integer id,
-                                   @RequestAttribute(value = "userKey",required = false) String userKey) {
+                                   @RequestAttribute(value = "userKey", required = false) String userKey) {
         QueryWrapper<News> newsQuery = new QueryWrapper<>();
-        newsQuery.eq("id",id)
+        newsQuery.eq("id", id)
                 .le("create_at", new Date(System.currentTimeMillis()));
         News news = newsService.getOne(newsQuery);
-        if(news == null){
-            return new ResponseMessage(CommonErrorCode.BAD_PARAMETERS.getErrorCode(),"没有该记录");
+        if (news == null) {
+            return new ResponseMessage(CommonErrorCode.BAD_PARAMETERS.getErrorCode(), "没有该记录");
         }
         AuthorRes authorInfo = userService.getAuthorInfo(news.getAuthor());
         TagRes tagRes = tagService.getTags(id);
         NewsRes newsRes = new NewsRes();
-        BeanUtils.copyProperties(news,newsRes);
+        BeanUtils.copyProperties(news, newsRes);
         newsRes.setAuthor(authorInfo);
         newsRes.setTag(tagRes);
 
-        NewsHit hit = newsService.getHitById(news.getId(),userKey);
+        NewsHit hit = newsService.getHitById(news.getId(), userKey);
         newsRes.setHit(hit);
 
         return new ResponseMessage(newsRes);
@@ -129,9 +129,9 @@ public class NewsController {
     @GetMapping("page/{pageNum}/{pageSize}")
     @AllowAccess
     public ResponseMessage pageNews(@PathVariable("pageNum") Integer pageNum,
-                                     @PathVariable("pageSize") Integer pageSize){
+                                    @PathVariable("pageSize") Integer pageSize) {
 
-        Page<NewsBasicRes> list = newsService.pageNews(pageNum,pageSize);
+        Page<NewsBasicRes> list = newsService.pageNews(pageNum, pageSize);
         return new ResponseMessage(list);
     }
 
@@ -139,10 +139,10 @@ public class NewsController {
     @AllowAccess
     public ResponseMessage pageNews(@PathVariable("pageNum") Integer pageNum,
                                     @PathVariable("pageSize") Integer pageSize,
-                                        @RequestParam("objectId") Integer objectId,
-                                    @RequestParam("type") Integer objectType){
+                                    @RequestParam("objectId") Integer objectId,
+                                    @RequestParam("type") Integer objectType) {
 
-        Page<NewsBasicRes> list = newsService.pageNewsByTag(pageNum,pageSize,objectId,objectType);
+        Page<NewsBasicRes> list = newsService.pageNewsByTag(pageNum, pageSize, objectId, objectType);
         return new ResponseMessage(list);
     }
 
