@@ -2,6 +2,7 @@ package com.jgxq.front.service;
 
 import com.jgxq.common.req.UserFindPasswordReq;
 import com.jgxq.common.req.UserRegReq;
+import com.jgxq.common.res.UserActiveRes;
 import com.jgxq.front.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -22,4 +23,6 @@ public interface UserService extends IService<User> {
     User getUserByPK(String col, String PK);
 
     boolean updatePassword(UserFindPasswordReq userReq);
+
+    UserActiveRes getUserActiveRes(String target);
 }

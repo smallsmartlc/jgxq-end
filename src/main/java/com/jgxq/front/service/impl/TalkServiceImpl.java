@@ -56,6 +56,9 @@ public class TalkServiceImpl extends ServiceImpl<TalkMapper, Talk> implements Ta
 
     @Override
     public Map<Integer, TalkHit> getHit(Collection<Integer> ids, String userKey) {
+        if (ids.isEmpty()) {
+            return Collections.emptyMap();
+        }
         boolean logged = userKey != null;
         QueryWrapper<Talk> talkQuery = new QueryWrapper<>();
         String[] selectSql = new String[4];
@@ -68,9 +71,7 @@ public class TalkServiceImpl extends ServiceImpl<TalkMapper, Talk> implements Ta
         talkQuery.select(selectSql);
         talkQuery.in("id", ids);
         List<Map<String, Object>> maps = talkMapper.selectMaps(talkQuery);
-        Map<Integer, TalkHit> res = maps.stream().collect(Collectors.toMap(m -> {
-            return Integer.parseInt(m.get("id").toString());
-        }, m -> {
+        Map<Integer, TalkHit> res = maps.stream().collect(Collectors.toMap(m -> Integer.parseInt(m.get("id").toString()), m -> {
             TalkHit hit = new TalkHit();
             hit.setComments(Integer.parseInt(m.get("comments").toString()));
             hit.setThumbs(Integer.parseInt(m.get("thumbs").toString()));

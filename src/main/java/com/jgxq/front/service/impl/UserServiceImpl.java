@@ -4,15 +4,15 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.jgxq.common.req.UserFindPasswordReq;
 import com.jgxq.common.req.UserRegReq;
-import com.jgxq.common.res.AuthorRes;
-import com.jgxq.common.res.TeamBasicRes;
-import com.jgxq.common.res.UserBasicRes;
-import com.jgxq.common.res.UserLoginRes;
+import com.jgxq.common.res.*;
 import com.jgxq.common.utils.LoginUtils;
 import com.jgxq.common.utils.PasswordHash;
 import com.jgxq.core.entity.AuthContext;
 import com.jgxq.front.define.KeyLength;
-import com.jgxq.front.entity.User;
+import com.jgxq.front.entity.*;
+import com.jgxq.front.mapper.CommentMapper;
+import com.jgxq.front.mapper.FocusMapper;
+import com.jgxq.front.mapper.TalkMapper;
 import com.jgxq.front.mapper.UserMapper;
 import com.jgxq.front.service.UserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -40,6 +40,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Autowired
     private TeamServiceImpl teamService;
+
+    @Autowired
+    private CommentMapper commentMapper;
+
+    @Autowired
+    private TalkMapper talkMapper;
+
+    @Autowired
+    private FocusMapper focusMapper;
 
     @Override
     public User login(String email, String password) {
@@ -92,6 +101,30 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 .set("password", userReq.getPassword());
         int flag = userMapper.update(null, wrapper);
         return flag > 0;
+    }
+
+    @Override
+    public UserActiveRes getUserActiveRes(String target) {
+        UserLoginRes user = userToLoginRes(getUserByPK("userkey",target));
+
+        UserActiveRes res = new UserActiveRes();
+        res.setUserInfo(user);
+        QueryWrapper<Talk> talkQuery = new QueryWrapper<>();
+        QueryWrapper<Comment> commentQuery = new QueryWrapper<>();
+        QueryWrapper<Focus> focusQuery = new QueryWrapper<>();
+        QueryWrapper<Focus> fansQuery = new QueryWrapper<>();
+
+        talkQuery.eq("author",target);
+        commentQuery.eq("userkey",target);
+        focusQuery.eq("userkey",target);
+        fansQuery.eq("target",target);
+
+        res.setTalks(talkMapper.selectCount(talkQuery));
+        res.setComments(commentMapper.selectCount(commentQuery));
+        res.setFocus(focusMapper.selectCount(focusQuery));
+        res.setFans(focusMapper.selectCount(fansQuery));
+
+        return res;
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jgxq.common.req.CommentReq;
 import com.jgxq.common.res.CommentRes;
+import com.jgxq.common.res.CommentUserRes;
 import com.jgxq.common.res.ReplyRes;
 import com.jgxq.core.anotation.AllowAccess;
 import com.jgxq.core.anotation.UserPermissionConf;
@@ -80,5 +81,17 @@ public class CommentController {
         return new ResponseMessage(page);
     }
 
+    @GetMapping("page/user")
+    public ResponseMessage pageComment(@RequestParam(value = "target", required = false) String target,
+                                        @RequestAttribute(value = "userKey") String userKey,
+                                        @RequestParam("pageNum") Integer pageNum,
+                                        @RequestParam("pageSize") Integer pageSize) {
+        if (target == null) {
+            target = userKey;
+        }
+        Page<CommentUserRes> page = commentService.pageUserComment(pageNum,pageSize,target,userKey);
+
+        return new ResponseMessage(page);
+    }
 
 }

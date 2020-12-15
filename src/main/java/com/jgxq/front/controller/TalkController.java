@@ -112,4 +112,33 @@ public class TalkController {
         return new ResponseMessage(resList);
     }
 
+
+    @GetMapping("page/user")
+    public ResponseMessage pageTalkList(@RequestParam(value = "target", required = false) String target,
+                                        @RequestAttribute(value = "userKey") String userKey,
+                                        @RequestParam("pageNum") Integer pageNum,
+                                        @RequestParam("pageSize") Integer pageSize) {
+        if (target == null) {
+            target = userKey;
+        }
+        Page<Talk> talkPage = new Page<>(pageNum, pageSize);
+
+        QueryWrapper<Talk> talkQuery = new QueryWrapper<>();
+        talkQuery.eq("author",target).orderByDesc("id");
+        talkService.page(talkPage, talkQuery);
+
+        List<Talk> records = talkPage.getRecords();
+        List<Integer> ids = records.stream().map(Talk::getId).collect(Collectors.toList());
+        Map<Integer, TalkHit> hitMap = talkService.getHit(ids, userKey);
+        List<TalkBasicRes> resList = records.stream().map(t -> {
+            TalkBasicRes talkBasicRes = new TalkBasicRes();
+            BeanUtils.copyProperties(t, talkBasicRes);
+            talkBasicRes.setHit(hitMap.get(t.getId()));
+            return talkBasicRes;
+        }).collect(Collectors.toList());
+        return new ResponseMessage(resList);
+
+    }
+
+
 }

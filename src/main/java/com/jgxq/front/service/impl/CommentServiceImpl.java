@@ -6,10 +6,13 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jgxq.common.dto.CommentHit;
 import com.jgxq.common.dto.CommentHitDto;
 import com.jgxq.common.res.CommentRes;
+import com.jgxq.common.res.CommentUserRes;
 import com.jgxq.common.res.ReplyRes;
 import com.jgxq.common.res.UserLoginRes;
+import com.jgxq.front.define.CommentType;
 import com.jgxq.front.define.InteractionType;
 import com.jgxq.front.entity.Comment;
+import com.jgxq.front.entity.Talk;
 import com.jgxq.front.entity.Thumb;
 import com.jgxq.front.mapper.CommentMapper;
 import com.jgxq.front.mapper.ThumbMapper;
@@ -46,6 +49,12 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 
     @Autowired
     private UserServiceImpl userService;
+
+    @Autowired
+    private NewsServiceImpl newsService;
+
+    @Autowired
+    private TalkServiceImpl talkService;
 
     @Override
     public Page<CommentRes> pageComment(Byte type, Integer objectId, String userKey, Integer pageNum, Integer pageSize) {
@@ -213,6 +222,76 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         return resPage;
 
 
+    }
+
+    @Override
+    public Page<CommentUserRes> pageUserComment(Integer pageNum, Integer pageSize, String target, String userKey) {
+        Page<Comment> page = new Page<>(pageNum, pageSize);
+        QueryWrapper<Comment> commentQuery = new QueryWrapper<>();
+        commentQuery.eq("userkey", target);
+        Page<Comment> commentPage = commentMapper.selectPage(page, commentQuery);
+
+        List<Comment> records = commentPage.getRecords();
+
+        if (records.isEmpty()) {
+            return null;
+        }
+
+        List<Integer> commentIds = records.stream()
+                .map(Comment::getId).collect(Collectors.toList());
+        //获取点赞数
+        QueryWrapper<Comment> thumbNumQuery = new QueryWrapper<>();
+        thumbNumQuery.select("id",
+                "(SELECT count(*) from thumb where type = " + InteractionType.COMMENT.getValue() + " and object_id = comment.id) as thumbs")
+                .in("id", commentIds);
+        List<Map<String, Object>> thumbNums = commentMapper.selectMaps(thumbNumQuery);
+        Map<Integer, Integer> thumbsMap = thumbNums
+                .stream().collect(Collectors.toMap(m -> Integer.parseInt(m.get("id").toString()),
+                        m -> Integer.parseInt(m.get("thumbs").toString())));
+
+        Set<Integer> talkIds = records.stream()
+                .filter(c -> c.getType() == CommentType.TALK.getValue())
+                .map(c -> c.getObjectId()).collect(Collectors.toSet());
+        Set<Integer> newsIds = records.stream()
+                .filter(c -> c.getType() == CommentType.NEWS.getValue())
+                .map(c -> c.getObjectId()).collect(Collectors.toSet());
+
+        Map<Integer, String> talkMap = null;
+        if (talkIds.isEmpty()) {
+            talkMap = Collections.EMPTY_MAP;
+        } else {
+            talkMap = talkService.listByIds(talkIds).stream()
+                    .collect(Collectors.toMap(t -> t.getId(), t -> StringUtils.abbreviate(t.getText(), 30)));
+        }
+
+        Map<Integer, String> newsMap = null;
+        if (newsIds.isEmpty()) {
+            newsMap = Collections.EMPTY_MAP;
+        } else {
+            newsMap = newsService.listByIds(newsIds).stream()
+                    .collect(Collectors.toMap(n -> n.getId(), n -> StringUtils.abbreviate(n.getTitle(), 30)));
+        }
+        Map<Integer, String> finalNewsMap = newsMap;
+        Map<Integer, String> finalTalkMap = talkMap;
+        List<CommentUserRes> result = records.stream().map(c -> {
+            CommentUserRes commentRes = new CommentUserRes();
+            Integer id = c.getId();
+            Integer commentThumbs = thumbsMap.get(id);
+            BeanUtils.copyProperties(c, commentRes);
+            commentRes.setThumbs(commentThumbs);
+            if (c.getType() == CommentType.NEWS.getValue()) {
+                commentRes.setTitle(finalNewsMap.get(c.getObjectId()));
+            }
+            if (c.getType() == CommentType.TALK.getValue()) {
+                commentRes.setTitle(finalTalkMap.get(c.getObjectId()));
+            }
+            return commentRes;
+        }).collect(Collectors.toList());
+
+        Page<CommentUserRes> resPage = new Page<>(commentPage.getCurrent(), commentPage.getSize(), commentPage.getTotal());
+        resPage.setRecords(result);
+
+        return resPage;
     }
 
 }
