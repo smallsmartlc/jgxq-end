@@ -85,5 +85,4 @@ public class UserController {
         Page<UserFocusRes> resPage = focusService.pageToResPage(page, userKey);
         return new ResponseMessage(resPage);
     }
-
 }

@@ -164,6 +164,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     public List<UserBasicRes> getUserBasicByKeyList(Collection<String> userkeyList){
+        if(userkeyList.isEmpty()){
+            return Collections.emptyList();
+        }
         QueryWrapper<User> userQuery = new QueryWrapper<>();
         userQuery.select("userkey","nick_name","head_image")
                 .in("userkey",userkeyList);

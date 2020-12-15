@@ -1,13 +1,17 @@
 package com.jgxq.front.controller;
 
 
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RestController;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.jgxq.core.anotation.UserPermissionConf;
+import com.jgxq.core.resp.ResponseMessage;
+import com.jgxq.front.entity.Focus;
+import com.jgxq.front.service.FocusService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author smallsmart
@@ -15,6 +19,29 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/focus")
+@UserPermissionConf
 public class FocusController {
 
+    @Autowired
+    private FocusService focusService;
+
+    //关注/取关
+    @PutMapping
+    public ResponseMessage focus(@RequestParam("target") String target,
+                                 @RequestAttribute(value = "userKey") String userKey,
+                                 @RequestParam("focused") Boolean focused) {
+        boolean flag = false;
+        if (focused) {
+            QueryWrapper<Focus> focusQuery = new QueryWrapper<>();
+            focusQuery.eq("userkey", userKey)
+                    .eq("target", target);
+            flag = focusService.remove(focusQuery);
+        } else {
+            Focus focus = new Focus();
+            focus.setUserkey(userKey);
+            focus.setTarget(target);
+            flag = focusService.save(focus);
+        }
+        return new ResponseMessage(flag);
+    }
 }
