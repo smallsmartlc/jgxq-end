@@ -90,7 +90,7 @@ public class PlayerController {
     public ResponseMessage getTeamMembers(@PathVariable("teamId") Integer teamId) {
         QueryWrapper<Player> playQuery = new QueryWrapper<>();
         playQuery.select("id","name","head_image","nation","number","position","birthday")
-                .eq("team",teamId);
+                .eq("team",teamId).orderByAsc("name");
         List<Player> list = playerService.list(playQuery);
 
         List<PlayerTeamRes> res = new ArrayList<>();

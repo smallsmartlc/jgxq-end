@@ -34,7 +34,7 @@ public class FocusController {
         if (focused) {
             QueryWrapper<Focus> focusQuery = new QueryWrapper<>();
             focusQuery.eq("userkey", userKey)
-                    .eq("target", target);
+                    .eq("target", target).orderByDesc("id");
             flag = focusService.remove(focusQuery);
         } else {
             Focus focus = new Focus();

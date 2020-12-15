@@ -1,25 +1,19 @@
 package com.jgxq.front.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jgxq.common.dto.NewsHit;
-import com.jgxq.common.req.TagReq;
 import com.jgxq.common.res.*;
-import com.jgxq.front.define.CommentType;
+import com.jgxq.front.define.ObjectType;
 import com.jgxq.front.define.InteractionType;
-import com.jgxq.front.define.TagType;
 import com.jgxq.front.entity.Collect;
-import com.jgxq.front.entity.Comment;
 import com.jgxq.front.entity.News;
 import com.jgxq.front.entity.Thumb;
 import com.jgxq.front.mapper.CollectMapper;
-import com.jgxq.front.mapper.CommentMapper;
 import com.jgxq.front.mapper.NewsMapper;
 import com.jgxq.front.mapper.ThumbMapper;
 import com.jgxq.front.service.NewsService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.sun.corba.se.spi.ior.ObjectId;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -119,7 +113,7 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News> implements Ne
         }
         QueryWrapper<News> newsQuery = new QueryWrapper<>();
         newsQuery.select("id",
-                "(select count(*) from comment where comment.object_id = news.id and comment.type = "+ CommentType.NEWS.getValue() +") as comments")
+                "(select count(*) from comment where comment.object_id = news.id and comment.type = "+ ObjectType.NEWS.getValue() +") as comments")
                 .in("id", ids);
 
         List<Map<String, Object>> maps = newsMapper.selectMaps(newsQuery);

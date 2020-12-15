@@ -4,13 +4,13 @@ package com.jgxq.front.define;
  * @author LuCong
  * @since 2020-12-12
  **/
-public enum CommentType {
+public enum ObjectType {
 
     NEWS(0),
     TALK(1);
 
 
-    CommentType(int value) {
+    ObjectType(int value) {
         this.value = value;
     }
 

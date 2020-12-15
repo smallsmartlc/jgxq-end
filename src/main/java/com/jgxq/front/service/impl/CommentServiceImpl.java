@@ -1,6 +1,5 @@
 package com.jgxq.front.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.Query;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jgxq.common.dto.CommentHit;
@@ -9,26 +8,21 @@ import com.jgxq.common.res.CommentRes;
 import com.jgxq.common.res.CommentUserRes;
 import com.jgxq.common.res.ReplyRes;
 import com.jgxq.common.res.UserLoginRes;
-import com.jgxq.front.define.CommentType;
+import com.jgxq.front.define.ObjectType;
 import com.jgxq.front.define.InteractionType;
 import com.jgxq.front.entity.Comment;
-import com.jgxq.front.entity.Talk;
 import com.jgxq.front.entity.Thumb;
 import com.jgxq.front.mapper.CommentMapper;
 import com.jgxq.front.mapper.ThumbMapper;
 import com.jgxq.front.service.CommentService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.annotations.Select;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static org.apache.ibatis.ognl.OgnlOps.in;
 
 /**
  * <p>
@@ -250,10 +244,10 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
                         m -> Integer.parseInt(m.get("thumbs").toString())));
 
         Set<Integer> talkIds = records.stream()
-                .filter(c -> c.getType() == CommentType.TALK.getValue())
+                .filter(c -> c.getType() == ObjectType.TALK.getValue())
                 .map(c -> c.getObjectId()).collect(Collectors.toSet());
         Set<Integer> newsIds = records.stream()
-                .filter(c -> c.getType() == CommentType.NEWS.getValue())
+                .filter(c -> c.getType() == ObjectType.NEWS.getValue())
                 .map(c -> c.getObjectId()).collect(Collectors.toSet());
 
         Map<Integer, String> talkMap = null;
@@ -279,10 +273,10 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
             Integer commentThumbs = thumbsMap.get(id);
             BeanUtils.copyProperties(c, commentRes);
             commentRes.setThumbs(commentThumbs);
-            if (c.getType() == CommentType.NEWS.getValue()) {
+            if (c.getType() == ObjectType.NEWS.getValue()) {
                 commentRes.setTitle(finalNewsMap.get(c.getObjectId()));
             }
-            if (c.getType() == CommentType.TALK.getValue()) {
+            if (c.getType() == ObjectType.TALK.getValue()) {
                 commentRes.setTitle(finalTalkMap.get(c.getObjectId()));
             }
             return commentRes;

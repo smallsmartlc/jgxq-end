@@ -61,7 +61,7 @@ public class UserController {
             target = userKey;
         }
         QueryWrapper<Focus> focusQuery = new QueryWrapper<>();
-        focusQuery.select("target").eq("userkey", target);
+        focusQuery.select("target").eq("userkey", target).orderByDesc("id");
         Page<Focus> page = new Page<>(pageNum, pageSize);
         focusService.page(page, focusQuery);
 
@@ -78,7 +78,7 @@ public class UserController {
             target = userKey;
         }
         QueryWrapper<Focus> focusQuery = new QueryWrapper<>();
-        focusQuery.select("userkey").eq("target", target);
+        focusQuery.select("userkey").eq("target", target).orderByDesc("id");
         Page<Focus> page = new Page<>(pageNum, pageSize);
         focusService.page(page, focusQuery);
 

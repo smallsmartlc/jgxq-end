@@ -47,7 +47,7 @@ public class MessageController {
                                        @RequestParam("pageSize") Integer pageSize) {
         Page<Message> page = new Page<>(pageNum, pageSize);
         QueryWrapper<Message> messageQuery = new QueryWrapper<>();
-        messageQuery.eq("target",userKey);
+        messageQuery.eq("target",userKey).orderByDesc("id");
         messageService.page(page,messageQuery);
         List<Message> messageList = page.getRecords();
         Set<String> userKeys = messageList.stream()
@@ -63,8 +63,6 @@ public class MessageController {
         }).collect(Collectors.toList());
         Page<MessageRes> resPage = new Page<>(page.getCurrent(), page.getSize(), page.getTotal());
         resPage.setRecords(resList);
-//        UpdateWrapper<Message> messageUpdate = new UpdateWrapper<>();
-//        messageUpdate.set("read", ReadType.UNREAD.getValue());
         messageService.update().eq("target",userKey)
                 .set("`read`", ReadType.READ.getValue()).update();
         return new ResponseMessage(resPage);

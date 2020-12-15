@@ -2,13 +2,12 @@ package com.jgxq.front.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.jgxq.common.dto.TalkHit;
-import com.jgxq.front.define.CommentType;
+import com.jgxq.front.define.ObjectType;
 import com.jgxq.front.define.InteractionType;
 import com.jgxq.front.entity.Talk;
 import com.jgxq.front.mapper.TalkMapper;
 import com.jgxq.front.service.TalkService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,10 +35,10 @@ public class TalkServiceImpl extends ServiceImpl<TalkMapper, Talk> implements Ta
     public TalkHit getHit(Integer id, String userKey) {
         QueryWrapper<Talk> talkQuery = new QueryWrapper<>();
         talkQuery.select("id",
-                "(select count(*) from comment where comment.object_id = talk.id and comment.type = " + CommentType.TALK.getValue() + ") as comments",
+                "(select count(*) from comment where comment.object_id = talk.id and comment.type = " + ObjectType.TALK.getValue() + ") as comments",
                 "(select count(*) from thumb where thumb.object_id = talk.id and thumb.type = " + InteractionType.TALK.getValue() + ") as thumbs",
                 "(select count(*) from thumb where thumb.object_id = talk.id and thumb.type = " + InteractionType.TALK.getValue() + " and thumb.userkey = '" + userKey + "') as has_thumb",
-                "(select count(*) from collect where collect.obj_id = talk.id and collect.type = " + CommentType.TALK.getValue() + " and collect.userkey = '" + userKey + "') as has_collect"
+                "(select count(*) from collect where collect.obj_id = talk.id and collect.type = " + ObjectType.TALK.getValue() + " and collect.userkey = '" + userKey + "') as has_collect"
         ).eq("id", id);
         List<Map<String, Object>> maps = talkMapper.selectMaps(talkQuery);
         if (maps.isEmpty()) {
@@ -63,7 +62,7 @@ public class TalkServiceImpl extends ServiceImpl<TalkMapper, Talk> implements Ta
         QueryWrapper<Talk> talkQuery = new QueryWrapper<>();
         String[] selectSql = new String[4];
         selectSql[0] = "id";
-        selectSql[1] = "(select count(*) from comment where comment.object_id = talk.id and comment.type = " + CommentType.TALK.getValue() + ") as comments";
+        selectSql[1] = "(select count(*) from comment where comment.object_id = talk.id and comment.type = " + ObjectType.TALK.getValue() + ") as comments";
         selectSql[2] = "(select count(*) from thumb where thumb.object_id = talk.id and thumb.type = " + InteractionType.TALK.getValue() + ") as thumbs";
         if (logged) {
             selectSql[3] = "(select count(*) from thumb where thumb.object_id = talk.id and thumb.type = " + InteractionType.TALK.getValue() + " and thumb.userkey = '" + userKey + "') as has_thumb";

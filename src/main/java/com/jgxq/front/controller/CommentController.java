@@ -12,8 +12,10 @@ import com.jgxq.core.anotation.UserPermissionConf;
 import com.jgxq.core.enums.CommonErrorCode;
 import com.jgxq.core.exception.SmartException;
 import com.jgxq.core.resp.ResponseMessage;
+import com.jgxq.front.define.ObjectType;
 import com.jgxq.front.entity.Comment;
 import com.jgxq.front.service.CommentService;
+import com.jgxq.front.service.impl.MessageServiceImpl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -37,6 +39,9 @@ public class CommentController {
     @Autowired
     private CommentService commentService;
 
+    @Autowired
+    private MessageServiceImpl messageService;
+
     @PostMapping
     public ResponseMessage comment(@RequestAttribute("userKey") String userkey,
                                    @RequestBody @Validated CommentReq commentReq) {
@@ -46,6 +51,13 @@ public class CommentController {
 
         boolean save = commentService.save(comment);
 
+        try {
+            if (commentReq.getType() == ObjectType.TALK.getValue()) {
+                messageService.sendCommentMessage(userkey, commentReq.getTarget(), commentReq.getType(), commentReq.getObjectId(), commentReq.getContent());
+            }
+        }catch (Exception e){
+            System.err.println("消息发送异常");
+        }
         return new ResponseMessage(save);
     }
 

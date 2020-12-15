@@ -2,6 +2,7 @@ package com.jgxq.forum;
 
 import com.jgxq.front.define.VerificationCodeType;
 import com.jgxq.front.sender.JGMailSender;
+import com.jgxq.front.service.impl.MessageServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,6 +14,14 @@ class AppTests {
 
     @Autowired
     private JGMailSender mailSender;
+
+    @Autowired
+    MessageServiceImpl messageService;
+
+    @Test
+    void MessageTest(){
+
+    }
 
     @Test
     void MailTest() throws MessagingException {

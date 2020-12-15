@@ -30,10 +30,6 @@ public class Message implements Serializable {
      * 0-赞,1-评论
      */
     private Byte messageType;
-
-    /**
-     * 0-新闻 1-talk
-     */
     private Byte objectType;
 
     private Integer objectId;

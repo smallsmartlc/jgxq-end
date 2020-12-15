@@ -13,12 +13,14 @@ import javax.validation.constraints.NotNull;
  **/
 @Data
 public class CommentReq {
-    @NotNull
-    Byte type;
-    @NotNull
-    Integer objectId;
-    Integer parentId;
-    Integer replyId;
     @NotBlank
-    String content;
+    private String target;
+    @NotNull
+    private Byte type;
+    @NotNull
+    private Integer objectId;
+    private Integer parentId;
+    private Integer replyId;
+    @NotBlank
+    private String content;
 }
