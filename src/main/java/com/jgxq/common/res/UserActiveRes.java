@@ -18,4 +18,6 @@ public class UserActiveRes {
     private Integer focus;
 
     private Integer fans;
+
+    private Boolean msg;
 }

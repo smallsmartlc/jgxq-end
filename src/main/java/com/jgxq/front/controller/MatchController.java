@@ -2,6 +2,7 @@ package com.jgxq.front.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jgxq.common.req.MatchReq;
 import com.jgxq.common.res.MatchBasicRes;
 import com.jgxq.common.res.MatchRes;
@@ -83,23 +84,25 @@ public class MatchController {
         return new ResponseMessage(res);
     }
 
-    @GetMapping("/page/{size}")
-    public ResponseMessage PageMatches(@PathVariable("size") Integer size,
-                                       @RequestParam(value = "start", required = false) Date start) {
+    @GetMapping("/page")
+    public ResponseMessage PageMatches(@RequestParam(value = "start", required = false) Date start,
+                                       @RequestParam(value = "teamId", required = false) String teamId,
+                                       @RequestParam("pageNum") Integer pageNum,
+                                       @RequestParam("pageSize") Integer pageSize) {
         if (start == null) {
             start = DateUtils.initDateByDay();
-        }else {
+        } else {
             start = DateUtils.initDateByDay(start);
         }
-        List<MatchBasicRes> res = matchService.listMatches(size, start);
+        Page<MatchBasicRes> res = matchService.listMatches(start, teamId, pageNum, pageSize);
 
         return new ResponseMessage(res);
     }
 
     @GetMapping("/home/{size}")
-    public ResponseMessage homeMatches(@PathVariable("size") Integer size) {
+    public ResponseMessage homeMatches(@PathVariable("size") Integer size, @RequestParam(value = "teamId", required = false) String teamId) {
 
-        List<MatchBasicRes> res = matchService.homeMatches(size);
+        List<MatchBasicRes> res = matchService.homeMatches(size, teamId);
         return new ResponseMessage(res);
     }
 
