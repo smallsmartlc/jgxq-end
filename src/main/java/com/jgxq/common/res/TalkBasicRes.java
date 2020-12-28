@@ -28,4 +28,6 @@ public class TalkBasicRes {
 
     private TalkHit hit;
 
+    private Date createAt;
+
 }

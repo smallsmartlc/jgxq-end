@@ -16,6 +16,7 @@ import com.jgxq.core.enums.CommonErrorCode;
 import com.jgxq.core.enums.UserPermissionType;
 import com.jgxq.core.exception.SmartException;
 import com.jgxq.core.resp.ResponseMessage;
+import com.jgxq.front.define.BooleanEnum;
 import com.jgxq.front.define.ForumErrorCode;
 import com.jgxq.front.define.VerificationCodeType;
 import com.jgxq.front.entity.User;
@@ -119,6 +120,7 @@ public class AuthController {
         response.setHeader("Set-Cookie", response.getHeader("Set-Cookie") + "; SameSite=Lax");
         UserLoginRes userRes = new UserLoginRes();
         BeanUtils.copyProperties(user, userRes);
+        userRes.setAuthor(user.getAuthor().equals(BooleanEnum.True.getValue()));
         TeamBasicRes team = teamService.getBasicTeamById(user.getHomeTeam());
         userRes.setHomeTeam(team);
 

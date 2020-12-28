@@ -129,11 +129,15 @@ public class TalkController {
 
         List<Talk> records = talkPage.getRecords();
         List<Integer> ids = records.stream().map(Talk::getId).collect(Collectors.toList());
+        Set<String> userKeys = records.stream().map(Talk::getAuthor).collect(Collectors.toSet());
+        List<UserBasicRes> userBasicList = userService.getUserBasicByKeyList(userKeys);
+        Map<String, UserBasicRes> map = userBasicList.stream().collect(Collectors.toMap(UserBasicRes::getUserkey, u -> u));
         Map<Integer, TalkHit> hitMap = talkService.getHit(ids, userKey);
         List<TalkBasicRes> resList = records.stream().map(t -> {
             TalkBasicRes talkBasicRes = new TalkBasicRes();
             BeanUtils.copyProperties(t, talkBasicRes);
             talkBasicRes.setHit(hitMap.get(t.getId()));
+            talkBasicRes.setAuthor(map.get(t.getAuthor()));
             return talkBasicRes;
         }).collect(Collectors.toList());
         return new ResponseMessage(resList);

@@ -23,6 +23,8 @@ public class UserLoginRes {
 
     private String city;
 
+    private Boolean author;
+
     private Date createAt;
 
     private TeamBasicRes homeTeam;

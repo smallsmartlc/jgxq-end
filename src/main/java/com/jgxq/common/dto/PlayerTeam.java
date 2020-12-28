@@ -13,7 +13,6 @@ public class PlayerTeam {
     private String headImage;
     private String nation;
     private Integer number;
-    private Integer team;
     private Integer position;
-    private String age;
+    private Integer age;
 }

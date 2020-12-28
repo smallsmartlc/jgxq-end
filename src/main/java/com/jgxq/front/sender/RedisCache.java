@@ -10,8 +10,10 @@ import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @author LuCong
@@ -85,6 +87,12 @@ public class RedisCache {
 
     public void lladd(String key, Object json) {
         redisTemplate.opsForList().leftPush(key, JSONObject.toJSONString(json));
+    }
+
+    public List<Integer> lrangeInt(String key){
+        List<String> stringList = redisTemplate.opsForList().range(key, 0, -1);
+        List<Integer> res = stringList.stream().map(s -> Integer.parseInt(s)).collect(Collectors.toList());
+        return res;
     }
 
     public void setExpired(String key, Object value, long timeout, TimeUnit unit) {

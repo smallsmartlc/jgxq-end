@@ -6,16 +6,20 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jgxq.common.req.MatchReq;
 import com.jgxq.common.res.MatchBasicRes;
 import com.jgxq.common.res.MatchRes;
+import com.jgxq.common.res.NewsBasicRes;
 import com.jgxq.common.res.TeamBasicRes;
 import com.jgxq.common.utils.DateUtils;
 import com.jgxq.core.resp.ResponseMessage;
 import com.jgxq.front.entity.Match;
+import com.jgxq.front.entity.News;
 import com.jgxq.front.service.MatchService;
 import com.jgxq.front.service.TeamService;
 import com.jgxq.front.service.impl.MatchServiceImpl;
+import com.jgxq.front.service.impl.NewsServiceImpl;
 import com.jgxq.front.service.impl.TeamServiceImpl;
 import com.jgxq.front.util.ReqUtils;
 import com.jgxq.front.util.ResUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -41,6 +45,9 @@ public class MatchController {
 
     @Autowired
     private TeamServiceImpl teamService;
+
+    @Autowired
+    private NewsServiceImpl newsService;
 
     @PostMapping
     public ResponseMessage addMatch(@RequestBody @Validated MatchReq matchReq) {
@@ -75,6 +82,14 @@ public class MatchController {
             return new ResponseMessage(match);
         }
         MatchRes res = ResUtils.matchToMatchRes(match);
+
+        NewsBasicRes newsBasic = null;
+        if(match.getMatchNews()!=null){
+            News news = newsService.getById(match.getMatchNews());
+            newsBasic = new NewsBasicRes();
+            BeanUtils.copyProperties(news,newsBasic);
+        }
+        res.setMatchNews(newsBasic);
 
         TeamBasicRes homeTeam = teamService.getBasicTeamById(match.getHomeTeam());
         TeamBasicRes visitingTeam = teamService.getBasicTeamById(match.getVisitingTeam());

@@ -23,7 +23,7 @@ public class MatchRes{
     private TeamBasicRes homeTeam;
     private TeamBasicRes visitingTeam;
     private Date startTime;
-    private Integer matchNews;
+    private NewsBasicRes matchNews;
     private MatchInfo matchInfo;
     private String link;
     private List<Action> actions;

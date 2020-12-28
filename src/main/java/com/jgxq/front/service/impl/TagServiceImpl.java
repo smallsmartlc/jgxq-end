@@ -45,7 +45,7 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
         tagQuery.eq("news_id",newsId);
         List<Tag> tags = tagMapper.selectList(tagQuery);
 
-        Map<Byte, List<Tag>> map = tags.stream().collect(Collectors.groupingBy(tag -> tag.getObjectType()));
+        Map<Integer, List<Tag>> map = tags.stream().collect(Collectors.groupingBy(tag -> tag.getObjectType().intValue()));
         TagRes tagRes = new TagRes();
         List<Tag> teams = map.get(TagType.TEAM.getValue());
         List<Tag> players = map.get(TagType.PLAYER.getValue());

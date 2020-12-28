@@ -8,6 +8,7 @@ import com.jgxq.common.dto.PlayerTeam;
 import com.jgxq.common.req.PlayerReq;
 import com.jgxq.common.res.PlayerRes;
 import com.jgxq.common.res.PlayerTeamRes;
+import com.jgxq.common.utils.DateUtils;
 import com.jgxq.core.resp.ResponseMessage;
 import com.jgxq.front.define.Position;
 import com.jgxq.front.define.StrongFoot;
@@ -99,6 +100,7 @@ public class PlayerController {
             PlayerTeam playerTeam = new PlayerTeam();
             BeanUtils.copyProperties(player, playerTeam);
             playerTeam.setPosition(player.getPosition().intValue());
+            playerTeam.setAge(DateUtils.getAgeByBirth(player.getBirthday()));
             return playerTeam;
         }).collect(Collectors.groupingBy((playerTeam -> Position.getPositionByVal(playerTeam.getPosition()))))
                 //转为map

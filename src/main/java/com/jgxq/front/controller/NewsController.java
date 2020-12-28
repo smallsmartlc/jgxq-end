@@ -146,5 +146,11 @@ public class NewsController {
         return new ResponseMessage(list);
     }
 
+    @GetMapping("home/top")
+    public ResponseMessage homeNews(@RequestParam(value = "size", required = false) Integer size) {
+        if (size != null && (size < 1 || size > 30)) return new ResponseMessage(null);
+        List<NewsBasicRes> list = newsService.listHomeNews(size);
+        return new ResponseMessage(list);
+    }
 
 }

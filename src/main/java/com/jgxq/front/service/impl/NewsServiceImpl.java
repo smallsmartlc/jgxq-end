@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jgxq.common.dto.NewsHit;
 import com.jgxq.common.res.*;
+import com.jgxq.core.enums.RedisKeys;
 import com.jgxq.front.define.ObjectType;
 import com.jgxq.front.define.InteractionType;
 import com.jgxq.front.entity.Collect;
@@ -12,16 +13,14 @@ import com.jgxq.front.entity.Thumb;
 import com.jgxq.front.mapper.CollectMapper;
 import com.jgxq.front.mapper.NewsMapper;
 import com.jgxq.front.mapper.ThumbMapper;
+import com.jgxq.front.sender.RedisCache;
 import com.jgxq.front.service.NewsService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -44,6 +43,9 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News> implements Ne
     @Autowired
     private CollectMapper collectMapper;
 
+    @Autowired
+    private RedisCache redisCache;
+
     @Override
     public Page<NewsBasicRes> pageNews(Integer pageNum, Integer pageSize) {
         Page<News> page = new Page<>(pageNum, pageSize);
@@ -58,12 +60,12 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News> implements Ne
     }
 
     @Override
-    public Page<NewsBasicRes> pageNewsByTag(Integer pageNum, Integer pageSize, Integer objectId,Integer objectType){
+    public Page<NewsBasicRes> pageNewsByTag(Integer pageNum, Integer pageSize, Integer objectId, Integer objectType) {
         Page<News> page = new Page<>(pageNum, pageSize);
         QueryWrapper<News> wrapper = new QueryWrapper<>();
         wrapper.select("id", "title", "cover")
                 .le("create_at", new Date(System.currentTimeMillis()))
-                .gt("(select count(*) from tag where tag.news_id = news.id and tag.object_id = "+ objectId +" and tag.object_type = "+objectType+")",0)
+                .gt("(select count(*) from tag where tag.news_id = news.id and tag.object_id = " + objectId + " and tag.object_type = " + objectType + ")", 0)
                 .orderByDesc("create_at");
         newsMapper.selectPage(page, wrapper);
         List<NewsBasicRes> newsBasicList = NewsListToBasicRes(page.getRecords());
@@ -72,7 +74,7 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News> implements Ne
         return resPage;
     }
 
-    private List<NewsBasicRes> NewsListToBasicRes(List<News> list){
+    private List<NewsBasicRes> NewsListToBasicRes(List<News> list) {
         List<Integer> ids = list.stream().map(News::getId).collect(Collectors.toList());
 
         Map<Integer, Integer> map = getCommentNumByIdList(ids);
@@ -113,7 +115,7 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News> implements Ne
         }
         QueryWrapper<News> newsQuery = new QueryWrapper<>();
         newsQuery.select("id",
-                "(select count(*) from comment where comment.object_id = news.id and comment.type = "+ ObjectType.NEWS.getValue() +") as comments")
+                "(select count(*) from comment where comment.object_id = news.id and comment.type = " + ObjectType.NEWS.getValue() + ") as comments")
                 .in("id", ids);
 
         List<Map<String, Object>> maps = newsMapper.selectMaps(newsQuery);
@@ -122,4 +124,30 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News> implements Ne
         return res;
     }
 
+    public List<NewsBasicRes> listHomeNews(Integer size) {
+        List<News> res = new ArrayList<>();
+        List<Integer> ids = new ArrayList<>();
+        ids = redisCache.lrangeInt(RedisKeys.top_news.getKey());
+        if (!ids.isEmpty()) {
+            QueryWrapper<News> newsQuery = new QueryWrapper<>();
+            newsQuery.select("id", "title", "cover")
+                    .in("id", ids)
+                    .le("create_at", new Date(System.currentTimeMillis()));
+            if(size != null){
+                newsQuery.last("limit " + size);
+            }
+            res = newsMapper.selectList(newsQuery);
+        }
+        if (size != null && size - res.size() > 0) {
+            QueryWrapper<News> wrapper = new QueryWrapper<>();
+            wrapper.select("id", "title", "cover").le("create_at", new Date(System.currentTimeMillis()))
+                    .orderByDesc("create_at").last("limit " + size);
+            if (!ids.isEmpty()) {
+                wrapper.notIn("id", ids);
+            }
+            List<News> temp = newsMapper.selectList(wrapper);
+            res.addAll(temp);
+        }
+        return NewsListToBasicRes(res);
+    }
 }
