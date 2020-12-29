@@ -255,7 +255,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
             talkMap = Collections.EMPTY_MAP;
         } else {
             talkMap = talkService.listByIds(talkIds).stream()
-                    .collect(Collectors.toMap(t -> t.getId(), t -> StringUtils.abbreviate(t.getText(), 30)));
+                    .collect(Collectors.toMap(t -> t.getId(), t -> StringUtils.abbreviate(t.getText(), 60)));
         }
 
         Map<Integer, String> newsMap = null;
@@ -263,7 +263,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
             newsMap = Collections.EMPTY_MAP;
         } else {
             newsMap = newsService.listByIds(newsIds).stream()
-                    .collect(Collectors.toMap(n -> n.getId(), n -> StringUtils.abbreviate(n.getTitle(), 30)));
+                    .collect(Collectors.toMap(n -> n.getId(), n -> StringUtils.abbreviate(n.getTitle(), 60)));
         }
         Map<Integer, String> finalNewsMap = newsMap;
         Map<Integer, String> finalTalkMap = talkMap;
