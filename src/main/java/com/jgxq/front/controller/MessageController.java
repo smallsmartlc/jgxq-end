@@ -63,7 +63,8 @@ public class MessageController {
         }).collect(Collectors.toList());
         Page<MessageRes> resPage = new Page<>(page.getCurrent(), page.getSize(), page.getTotal());
         resPage.setRecords(resList);
-        messageService.update().eq("target", userKey)
+
+        messageService.update().eq("target", userKey).eq("`read`",ReadType.UNREAD.getValue())
                 .set("`read`", ReadType.READ.getValue()).update();
         return new ResponseMessage(resPage);
     }
