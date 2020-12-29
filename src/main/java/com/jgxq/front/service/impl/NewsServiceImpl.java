@@ -74,7 +74,7 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News> implements Ne
         return resPage;
     }
 
-    private List<NewsBasicRes> NewsListToBasicRes(List<News> list) {
+    public List<NewsBasicRes> NewsListToBasicRes(List<News> list) {
         List<Integer> ids = list.stream().map(News::getId).collect(Collectors.toList());
 
         Map<Integer, Integer> map = getCommentNumByIdList(ids);
