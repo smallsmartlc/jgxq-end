@@ -13,7 +13,6 @@ import javax.validation.constraints.NotNull;
  **/
 @Data
 public class CommentReq {
-    @NotBlank
     private String target;
     @NotNull
     private Byte type;

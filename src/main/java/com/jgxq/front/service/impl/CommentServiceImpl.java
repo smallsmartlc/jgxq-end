@@ -57,12 +57,12 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         commentQuery.eq("object_id", objectId)
                 .eq("type", type)
                 .eq("parent_id", 0);
-        Page<Comment> commentPage = commentMapper.selectPage(page, commentQuery);
+        commentMapper.selectPage(page, commentQuery);
 
-        List<Comment> records = commentPage.getRecords();
+        List<Comment> records = page.getRecords();
 
         if (records.isEmpty()) {
-            return null;
+            return new Page(page.getCurrent(),page.getSize(),page.getTotal());
         }
 
         List<Integer> parentIds = records.stream()
@@ -70,7 +70,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         //获取点赞和评论数
         QueryWrapper<Comment> commentNumQuery = new QueryWrapper<>();
         commentNumQuery.select("id",
-                "(SELECT count(*) from `comment` as c where c.parent_id = comment.id) as comments",
+                "(SELECT count(*) from `comment` as c where c.parent_id = comment.id and status = 1) as comments",
                 "(SELECT count(*) from thumb where type = " + InteractionType.COMMENT.getValue() + " and object_id = comment.id) as thumbs")
                 .in("id", parentIds);
         List<Map<String, Object>> commentNums = commentMapper.selectMaps(commentNumQuery);
@@ -122,7 +122,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
             return commentRes;
         }).collect(Collectors.toList());
 
-        Page<CommentRes> resPage = new Page<>(commentPage.getCurrent(), commentPage.getSize(), commentPage.getTotal());
+        Page<CommentRes> resPage = new Page<>(page.getCurrent(), page.getSize(), page.getTotal());
         resPage.setRecords(result);
 
         return resPage;

@@ -56,7 +56,7 @@ public class ThumbServiceImpl extends ServiceImpl<ThumbMapper, Thumb> implements
         try {
             flag = thumbMapper.insert(thumb);
         }catch (DuplicateKeyException e){
-            throw new SmartException(CommonErrorCode.BAD_PARAMETERS.getErrorCode(),"您已经赞过了");
+            return false;
         }
         boolean res = flag > 0;
         try {

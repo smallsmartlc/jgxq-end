@@ -92,11 +92,28 @@ public class JwtLoginInterceptor extends HandlerInterceptorAdapter {
         try {
             userkey = JwtUtil.dealRequests(authHeader);
         } catch (Exception e) {
+            //说明这是一个垃圾Cookie,解析出一个没用的key,可能用户已经被删除无法登陆了
+            // 删掉这个垃圾Cookie
+            for (Cookie cookie : cookies) {
+                if ((JwtUtil.JG_COOKIE).equals(cookie.getName())) {
+                    cookie.setMaxAge(0);
+                    response.addCookie(cookie);
+                }
+            }
+            setRespError(response, HttpStatus.UNAUTHORIZED.value(), "invalid token");
             return false;
         }
         if (StringUtils.isBlank(userkey)) {
             // 错误的token,无法解析userkey
-            setRespError(response, HttpStatus.BAD_REQUEST.value(), "invalid token");
+            //说明这是一个垃圾Cookie,解析出一个没用的key,可能用户已经被删除无法登陆了
+            // 删掉这个垃圾Cookie
+            for (Cookie cookie : cookies) {
+                if ((JwtUtil.JG_COOKIE).equals(cookie.getName())) {
+                    cookie.setMaxAge(0);
+                    response.addCookie(cookie);
+                }
+            }
+            setRespError(response, HttpStatus.UNAUTHORIZED.value(), "invalid token");
             return false;
         }
         User user = userService.getUserByPK("userkey", userkey);

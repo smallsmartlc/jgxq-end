@@ -35,7 +35,7 @@ public class TalkServiceImpl extends ServiceImpl<TalkMapper, Talk> implements Ta
     public TalkHit getHit(Integer id, String userKey) {
         QueryWrapper<Talk> talkQuery = new QueryWrapper<>();
         talkQuery.select("id",
-                "(select count(*) from comment where comment.object_id = talk.id and comment.type = " + ObjectType.TALK.getValue() + ") as comments",
+                "(select count(*) from comment where comment.object_id = talk.id and comment.type = " + ObjectType.TALK.getValue() + " and status = 1) as comments",
                 "(select count(*) from thumb where thumb.object_id = talk.id and thumb.type = " + InteractionType.TALK.getValue() + ") as thumbs",
                 "(select count(*) from thumb where thumb.object_id = talk.id and thumb.type = " + InteractionType.TALK.getValue() + " and thumb.userkey = '" + userKey + "') as has_thumb",
                 "(select count(*) from collect where collect.obj_id = talk.id and collect.type = " + ObjectType.TALK.getValue() + " and collect.userkey = '" + userKey + "') as has_collect"
@@ -62,7 +62,7 @@ public class TalkServiceImpl extends ServiceImpl<TalkMapper, Talk> implements Ta
         QueryWrapper<Talk> talkQuery = new QueryWrapper<>();
         String[] selectSql = new String[4];
         selectSql[0] = "id";
-        selectSql[1] = "(select count(*) from comment where comment.object_id = talk.id and comment.type = " + ObjectType.TALK.getValue() + ") as comments";
+        selectSql[1] = "(select count(*) from comment where comment.object_id = talk.id and comment.type = " + ObjectType.TALK.getValue() + " and status = 1) as comments";
         selectSql[2] = "(select count(*) from thumb where thumb.object_id = talk.id and thumb.type = " + InteractionType.TALK.getValue() + ") as thumbs";
         if (logged) {
             selectSql[3] = "(select count(*) from thumb where thumb.object_id = talk.id and thumb.type = " + InteractionType.TALK.getValue() + " and thumb.userkey = '" + userKey + "') as has_thumb";

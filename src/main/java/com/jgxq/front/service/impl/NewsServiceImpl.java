@@ -115,7 +115,7 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News> implements Ne
         }
         QueryWrapper<News> newsQuery = new QueryWrapper<>();
         newsQuery.select("id",
-                "(select count(*) from comment where comment.object_id = news.id and comment.type = " + ObjectType.NEWS.getValue() + ") as comments")
+                "(select count(*) from comment where comment.object_id = news.id and comment.type = " + ObjectType.NEWS.getValue() + " and status = 1) as comments")
                 .in("id", ids);
 
         List<Map<String, Object>> maps = newsMapper.selectMaps(newsQuery);
