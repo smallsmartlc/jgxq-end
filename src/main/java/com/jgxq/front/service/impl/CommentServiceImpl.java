@@ -136,9 +136,11 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         Page<Comment> commentPage = commentMapper.selectPage(page, commentQuery);
 
         List<Comment> records = commentPage.getRecords();
+        Page<ReplyRes> resPage = new Page<>(commentPage.getCurrent(), commentPage.getSize(), commentPage.getTotal());
 
         if (records.isEmpty()) {
-            return null;
+            resPage.setRecords(Collections.EMPTY_LIST);
+            return resPage;
         }
         // 获取评论里回复的回复
         List<Integer> replyIds = records.stream()
@@ -210,7 +212,6 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
             return replyRes;
         }).collect(Collectors.toList());
 
-        Page<ReplyRes> resPage = new Page<>(commentPage.getCurrent(), commentPage.getSize(), commentPage.getTotal());
         resPage.setRecords(result);
 
         return resPage;
@@ -226,9 +227,11 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         Page<Comment> commentPage = commentMapper.selectPage(page, commentQuery);
 
         List<Comment> records = commentPage.getRecords();
+        Page<CommentUserRes> resPage = new Page<>(commentPage.getCurrent(), commentPage.getSize(), commentPage.getTotal());
 
         if (records.isEmpty()) {
-            return null;
+            resPage.setRecords(Collections.EMPTY_LIST);
+            return resPage;
         }
 
         List<Integer> commentIds = records.stream()
@@ -282,7 +285,6 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
             return commentRes;
         }).collect(Collectors.toList());
 
-        Page<CommentUserRes> resPage = new Page<>(commentPage.getCurrent(), commentPage.getSize(), commentPage.getTotal());
         resPage.setRecords(result);
 
         return resPage;

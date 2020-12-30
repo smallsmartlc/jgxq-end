@@ -49,7 +49,7 @@ public class CommentController {
         BeanUtils.copyProperties(commentReq, comment);
         comment.setUserkey(userkey);
 
-        boolean save = commentService.save(comment);
+        commentService.save(comment);
 
         try {
             if (commentReq.getType() == ObjectType.TALK.getValue()) {
@@ -58,7 +58,7 @@ public class CommentController {
         }catch (Exception e){
             System.err.println("消息发送异常");
         }
-        return new ResponseMessage(save);
+        return new ResponseMessage(comment.getId());
     }
 
     @DeleteMapping("{id}")
