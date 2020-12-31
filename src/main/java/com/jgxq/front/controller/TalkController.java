@@ -83,10 +83,10 @@ public class TalkController {
         return new ResponseMessage(talkRes);
     }
 
-    @GetMapping("/page")
+    @GetMapping("/page/{pageNum}/{pageSize}")
     @AllowAccess
-    public ResponseMessage pageTalk(@RequestParam("pageNum") Integer pageNum,
-                                    @RequestParam("pageSize") Integer pageSize,
+    public ResponseMessage pageTalk(@PathVariable("pageNum") Integer pageNum,
+                                    @PathVariable("pageSize") Integer pageSize,
                                     @RequestAttribute(value = "userKey" ,required = false) String userKey){
         Page<Talk> talkPage = new Page<>(pageNum, pageSize);
 
@@ -108,8 +108,9 @@ public class TalkController {
             talkBasicRes.setAuthor(map.get(t.getAuthor()));
             return talkBasicRes;
         }).collect(Collectors.toList());
-
-        return new ResponseMessage(resList);
+        Page<TalkBasicRes> resPage = new Page<>(talkPage.getCurrent(), talkPage.getSize(), talkPage.getTotal());
+        resPage.setRecords(resList);
+        return new ResponseMessage(resPage);
     }
 
 

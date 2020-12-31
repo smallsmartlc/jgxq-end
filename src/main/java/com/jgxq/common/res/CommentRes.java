@@ -32,6 +32,10 @@ public class CommentRes{
      */
     private String content;
 
+    private Byte type;
+
+    private Integer objectId;
+
     private Date createAt;
 
 }

@@ -25,6 +25,12 @@ public class ReplyRes {
     /**
      * 评论
      */
+    private Byte type;
+
+    private Integer objectId;
+
+    private Integer parentId;
+
     private String content;
 
     private Date createAt;

@@ -41,7 +41,7 @@ public class MatchServiceImpl extends ServiceImpl<MatchMapper, Match> implements
         if(teamId!=null){
             matchQuery.eq("home_team",teamId).or().eq("visiting_team",teamId);
         }
-        Page page = new Page();
+        Page page = new Page(pageNum,pageSize);
         matchMapper.selectPage(page,matchQuery);
         List<MatchBasicRes> res = matchListToBasicRes(page.getRecords());
         Page<MatchBasicRes> resPage = new Page<>(page.getCurrent(),page.getSize(),page.getTotal());

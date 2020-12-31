@@ -127,7 +127,11 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News> implements Ne
     public List<NewsBasicRes> listHomeNews(Integer size) {
         List<News> res = new ArrayList<>();
         List<Integer> ids = new ArrayList<>();
-        ids = redisCache.lrangeInt(RedisKeys.top_news.getKey());
+        try {
+            ids = redisCache.lrangeInt(RedisKeys.top_news.getKey());
+        }catch (Exception e){
+            System.err.println("redis服务器异常");
+        }
         if (!ids.isEmpty()) {
             QueryWrapper<News> newsQuery = new QueryWrapper<>();
             newsQuery.select("id", "title", "cover")

@@ -148,10 +148,8 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         List<Comment> replyComment = null;
         if (!replyIds.isEmpty()) {
             QueryWrapper<Comment> replyQuery = new QueryWrapper<>();
-            replyQuery.in("reply_id", replyIds);
+            replyQuery.in("id", replyIds);
             replyComment = commentMapper.selectList(replyQuery);
-        } else {
-            replyIds = Collections.EMPTY_LIST;
         }
         Map<Integer, Comment> replyMap = replyComment.stream().collect(Collectors.toMap(Comment::getId, c -> c));
 
