@@ -62,6 +62,15 @@ public class MatchServiceImpl extends ServiceImpl<MatchMapper, Match> implements
         return res;
     }
 
+    @Override
+    public List<MatchBasicRes> endMatches(Integer size) {
+        QueryWrapper<Match> matchQuery = new QueryWrapper<>();
+        matchQuery.le("start_time", new Date()).orderByDesc("start_time").last("limit " + size);
+        List<Match> matchList = matchMapper.selectList(matchQuery);
+        List<MatchBasicRes> res = matchListToBasicRes(matchList);
+        return res;
+    }
+
     private List<MatchBasicRes> matchListToBasicRes(List<Match> matchList){
         Set<Integer> teamIds = new HashSet<>();
         matchList.forEach(m -> {

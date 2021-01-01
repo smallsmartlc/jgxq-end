@@ -121,4 +121,11 @@ public class MatchController {
         return new ResponseMessage(res);
     }
 
+    @GetMapping("/end/{size}")
+    public ResponseMessage endMatches(@PathVariable("size") Integer size) {
+
+        List<MatchBasicRes> res = matchService.endMatches(size);
+        return new ResponseMessage(res);
+    }
+
 }

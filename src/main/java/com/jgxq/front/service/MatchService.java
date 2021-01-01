@@ -21,4 +21,6 @@ public interface MatchService extends IService<Match> {
     Page<MatchBasicRes> listMatches(Date start, String teamId, Integer pageNum, Integer pageSize);
 
     List<MatchBasicRes> homeMatches(Integer size, String teamId);
+
+    List<MatchBasicRes> endMatches(Integer size);
 }
