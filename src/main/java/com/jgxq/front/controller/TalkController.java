@@ -73,6 +73,7 @@ public class TalkController {
                                    @RequestAttribute("userKey") String userKey) {
 
         Talk talk = talkService.getById(id);
+        if(talk == null) return new ResponseMessage(null);
         User user = userService.getUserByPK("userkey", talk.getAuthor());
         UserLoginRes userRes = userService.userToLoginRes(user);
         TalkRes talkRes = new TalkRes();
@@ -141,7 +142,9 @@ public class TalkController {
             talkBasicRes.setAuthor(map.get(t.getAuthor()));
             return talkBasicRes;
         }).collect(Collectors.toList());
-        return new ResponseMessage(resList);
+        Page<TalkBasicRes> resPage = new Page<>(talkPage.getCurrent(), talkPage.getSize(), talkPage.getTotal());
+        resPage.setRecords(resList);
+        return new ResponseMessage(resPage);
 
     }
 

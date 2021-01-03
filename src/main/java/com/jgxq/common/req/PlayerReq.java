@@ -3,6 +3,7 @@ package com.jgxq.common.req;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.jgxq.common.dto.PlayerInfo;
+import com.jgxq.common.dto.PlayerInfos;
 import com.jgxq.front.entity.Player;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -77,6 +78,6 @@ public class PlayerReq {
     /**
      * 基本信息
      */
-    private List<PlayerInfo> infos;
+    private PlayerInfos infos;
 
 }

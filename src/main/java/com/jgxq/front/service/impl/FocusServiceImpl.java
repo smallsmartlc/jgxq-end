@@ -13,6 +13,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,7 +37,9 @@ public class FocusServiceImpl extends ServiceImpl<FocusMapper, Focus> implements
         List<String> keyList = records
                 .stream().map(Focus::getTarget).collect(Collectors.toList());
         if (keyList.isEmpty()) {
-            return null;
+            Page resPage = new Page(page.getCurrent(), page.getSize(), page.getTotal());
+            resPage.setRecords(Collections.emptyList());
+            return resPage;
         }
 
         //当前用户是否关注

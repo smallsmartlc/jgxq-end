@@ -19,5 +19,4 @@ public class UserActiveRes {
 
     private Integer fans;
 
-    private Boolean msg;
 }

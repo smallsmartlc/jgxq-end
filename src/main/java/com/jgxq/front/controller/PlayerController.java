@@ -4,6 +4,7 @@ package com.jgxq.front.controller;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.jgxq.common.dto.PlayerInfo;
+import com.jgxq.common.dto.PlayerInfos;
 import com.jgxq.common.dto.PlayerTeam;
 import com.jgxq.common.req.PlayerReq;
 import com.jgxq.common.res.PlayerRes;
@@ -14,6 +15,7 @@ import com.jgxq.front.define.Position;
 import com.jgxq.front.define.StrongFoot;
 import com.jgxq.front.entity.Player;
 import com.jgxq.front.service.PlayerService;
+import com.jgxq.front.service.impl.TeamServiceImpl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -37,6 +39,9 @@ public class PlayerController {
 
     @Autowired
     private PlayerService playerService;
+
+    @Autowired
+    private TeamServiceImpl teamService;
 
     @PostMapping
     public ResponseMessage addPlayer(@RequestBody @Validated PlayerReq playerReq) {
@@ -82,7 +87,8 @@ public class PlayerController {
         BeanUtils.copyProperties(player, playerRes);
         playerRes.setStrongFoot(StrongFoot.getFootByVal(player.getStrongFoot()));
         playerRes.setPosition(Position.getPositionByVal(player.getPosition()));
-        List<PlayerInfo> infos = JSON.parseArray(player.getInfos(), PlayerInfo.class);
+        playerRes.setTeam(teamService.getBasicTeamById(player.getTeam()));
+        PlayerInfos infos = JSON.parseObject(player.getInfos(),PlayerInfos.class);
         playerRes.setInfos(infos);
         return new ResponseMessage(playerRes);
     }

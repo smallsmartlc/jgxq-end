@@ -69,7 +69,9 @@ public class UserController {
         focusQuery.select("target").eq("userkey", target).orderByDesc("id");
         Page<Focus> page = new Page<>(pageNum, pageSize);
         focusService.page(page, focusQuery);
-
+        if(page.getRecords().isEmpty()){
+            new ResponseMessage(page);
+        }
         Page<UserFocusRes> resPage = focusService.pageToResPage(page, userKey);
         return new ResponseMessage(resPage);
     }
@@ -86,7 +88,9 @@ public class UserController {
         focusQuery.select("userkey").eq("target", target).orderByDesc("id");
         Page<Focus> page = new Page<>(pageNum, pageSize);
         focusService.page(page, focusQuery);
-
+        if(page.getRecords().isEmpty()){
+            new ResponseMessage(page);
+        }
         Page<UserFocusRes> resPage = focusService.pageToResPage(page, userKey);
         return new ResponseMessage(resPage);
     }

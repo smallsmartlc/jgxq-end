@@ -132,7 +132,6 @@ public class NewsController {
     @AllowAccess
     public ResponseMessage pageNews(@PathVariable("pageNum") Integer pageNum,
                                     @PathVariable("pageSize") Integer pageSize) {
-
         Page<NewsBasicRes> list = newsService.pageNews(pageNum, pageSize);
         return new ResponseMessage(list);
     }
