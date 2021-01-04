@@ -106,7 +106,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public UserActiveRes getUserActiveRes(String target) {
         UserLoginRes user = userToLoginRes(getUserByPK("userkey",target));
-
+        if(user == null){
+            return null;
+        }
         UserActiveRes res = new UserActiveRes();
         res.setUserInfo(user);
         QueryWrapper<Talk> talkQuery = new QueryWrapper<>();

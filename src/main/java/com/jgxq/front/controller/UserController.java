@@ -105,7 +105,7 @@ public class UserController {
         collectService.page(page,collectQuery);
         List<Integer> newsIds = page.getRecords().stream().map(Collect::getObjId).collect(Collectors.toList());
         if(newsIds.isEmpty()){
-            new ResponseMessage(page);
+            return new ResponseMessage(page);
         }
         List<NewsBasicRes> newsBasicResList = newsService.NewsListToBasicRes(newsService.listByIds(newsIds));
         Map<Integer, NewsBasicRes> map = newsBasicResList.stream().collect(Collectors.toMap(NewsBasicRes::getId, Function.identity()));

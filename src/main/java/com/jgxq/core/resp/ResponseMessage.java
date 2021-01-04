@@ -39,8 +39,6 @@ public class ResponseMessage {
         this.code = code;
         this.msg = msg;
         this.data = data;
-
-
     }
 
     public String getCode() {

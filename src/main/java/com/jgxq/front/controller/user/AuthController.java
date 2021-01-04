@@ -27,6 +27,7 @@ import com.jgxq.front.service.UserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,6 +36,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.Email;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -66,6 +68,21 @@ public class AuthController {
     @Autowired
     private RedisCache cache;
 
+    @GetMapping
+    public ResponseMessage checkUser(@RequestAttribute(value = "userKey",required = false) String userKey){
+        if(userKey == null){
+            return new ResponseMessage(null);
+        }
+        User user = userService.getUserByPK("userkey",userKey);
+        UserLoginRes userRes = new UserLoginRes();
+        BeanUtils.copyProperties(user, userRes);
+        userRes.setAuthor(user.getAuthor().equals(BooleanEnum.True.getValue()));
+        TeamBasicRes team = teamService.getBasicTeamById(user.getHomeTeam());
+        userRes.setHomeTeam(team);
+
+        return new ResponseMessage(userRes);
+    }
+
     @PostMapping("getCode/{email}/{type}")
     public ResponseMessage getCode(@PathVariable("email") @Email(message = "邮箱地址不合法!") String email,
                                    @PathVariable("type") VerificationCodeType type) {
@@ -73,7 +90,7 @@ public class AuthController {
         if (type != VerificationCodeType.REG) {
             User user = userService.getUserByPK("email", email);
             if (user == null) {
-                return new ResponseMessage(ForumErrorCode.Email_Send_Error, "该账号不存在");
+                return new ResponseMessage(ForumErrorCode.Email_Send_Error.getErrorCode(), "该账号不存在");
             }
         }
         String code = LoginUtils.createValidateCode(6);
@@ -86,8 +103,25 @@ public class AuthController {
         } catch (MessagingException e) {
             return new ResponseMessage(ForumErrorCode.Email_Send_Error, "邮件发送失败");
         }
-        return new ResponseMessage(true, "邮件发送成功!");
+        return new ResponseMessage(true);
     }
+
+    @PostMapping("logout")
+    public ResponseMessage logout(HttpServletRequest request,HttpServletResponse response) throws IOException {
+        Cookie[] cookies = request.getCookies();
+        if(cookies != null){
+            for (Cookie cookie : cookies) {
+                if ((JwtUtil.JG_COOKIE).equals(cookie.getName())) {
+                    cookie.setPath("/");
+                    cookie.setMaxAge(0);
+                    response.addCookie(cookie);
+                }
+            }
+        }
+        response.sendError(HttpStatus.UNAUTHORIZED.value(), "log out");
+        return null;
+    }
+
 
     @PostMapping("login")
     public ResponseMessage login(@RequestBody @Validated UserLoginReq userReq,
@@ -128,7 +162,7 @@ public class AuthController {
     }
 
 
-    @PostMapping("register")
+        @PostMapping("register")
     public ResponseMessage register(@RequestBody @Validated UserRegReq userReq) {
 
         String key = LoginUtils.emailToRedisKey(userReq.getEmail(), VerificationCodeType.REG);
