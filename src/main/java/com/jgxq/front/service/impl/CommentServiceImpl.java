@@ -221,7 +221,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
     public Page<CommentUserRes> pageUserComment(Integer pageNum, Integer pageSize, String target, String userKey) {
         Page<Comment> page = new Page<>(pageNum, pageSize);
         QueryWrapper<Comment> commentQuery = new QueryWrapper<>();
-        commentQuery.eq("userkey", target);
+        commentQuery.eq("userkey", target).orderByDesc("id");
         Page<Comment> commentPage = commentMapper.selectPage(page, commentQuery);
 
         List<Comment> records = commentPage.getRecords();
@@ -256,7 +256,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
             talkMap = Collections.EMPTY_MAP;
         } else {
             talkMap = talkService.listByIds(talkIds).stream()
-                    .collect(Collectors.toMap(t -> t.getId(), t -> StringUtils.abbreviate(t.getText(), 60)));
+                    .collect(Collectors.toMap(t -> t.getId(), t -> StringUtils.abbreviate(t.getText().replaceAll("<img.*?(?:>|\\/>)","[图片]").replaceAll("<[^>]+>|&[^>]+;",""), 60)));
         }
 
         Map<Integer, String> newsMap = null;

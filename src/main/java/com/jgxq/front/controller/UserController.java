@@ -3,6 +3,7 @@ package com.jgxq.front.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.jgxq.common.req.UserUpdateReq;
 import com.jgxq.common.res.CollectNewsRes;
 import com.jgxq.common.res.NewsBasicRes;
 import com.jgxq.common.res.UserActiveRes;
@@ -47,11 +48,22 @@ public class UserController {
     @Autowired
     private NewsServiceImpl newsService;
 
+    @PutMapping("info")
+    public ResponseMessage updateUser(@RequestBody UserUpdateReq userReq,
+                                      @RequestAttribute("userKey") String userKey) {
+        User user = new User();
+        BeanUtils.copyProperties(userReq, user);
+        UpdateWrapper<User> userUpdate = new UpdateWrapper<>();
+        userUpdate.eq("userkey",userKey);
+        boolean flag = userService.update(user, userUpdate);
+        return new ResponseMessage(flag);
+    }
+
     @PutMapping("homeTeam/{teamId}")
     public ResponseMessage updateHomeTeam(@PathVariable("teamId") Integer teamId,
-                                       @RequestAttribute("userKey") String userKey){
+                                          @RequestAttribute("userKey") String userKey) {
         UpdateWrapper<User> userUpdate = new UpdateWrapper<>();
-        userUpdate.set("home_team",teamId).eq("userkey",userKey);
+        userUpdate.set("home_team", teamId).eq("userkey", userKey);
         boolean flag = userService.update(userUpdate);
         return new ResponseMessage(flag);
     }
@@ -80,7 +92,7 @@ public class UserController {
         focusQuery.select("target").eq("userkey", target).orderByDesc("id");
         Page<Focus> page = new Page<>(pageNum, pageSize);
         focusService.page(page, focusQuery);
-        if(page.getRecords().isEmpty()){
+        if (page.getRecords().isEmpty()) {
             new ResponseMessage(page);
         }
         Page<UserFocusRes> resPage = focusService.pageToResPage(page, userKey);
@@ -99,7 +111,7 @@ public class UserController {
         focusQuery.select("userkey").eq("target", target).orderByDesc("id");
         Page<Focus> page = new Page<>(pageNum, pageSize);
         focusService.page(page, focusQuery);
-        if(page.getRecords().isEmpty()){
+        if (page.getRecords().isEmpty()) {
             new ResponseMessage(page);
         }
         Page<UserFocusRes> resPage = focusService.pageToResPage(page, userKey);
@@ -109,13 +121,13 @@ public class UserController {
     @GetMapping("page/collect")
     public ResponseMessage getCollectNews(@RequestParam("pageNum") Integer pageNum,
                                           @RequestParam("pageSize") Integer pageSize,
-                                          @RequestAttribute(value = "userKey") String userKey){
+                                          @RequestAttribute(value = "userKey") String userKey) {
         QueryWrapper<Collect> collectQuery = new QueryWrapper<>();
-        collectQuery.eq("userkey",userKey).orderByDesc("create_time");
-        Page<Collect> page = new Page<>(pageNum,pageSize);
-        collectService.page(page,collectQuery);
+        collectQuery.eq("userkey", userKey).orderByDesc("create_time");
+        Page<Collect> page = new Page<>(pageNum, pageSize);
+        collectService.page(page, collectQuery);
         List<Integer> newsIds = page.getRecords().stream().map(Collect::getObjId).collect(Collectors.toList());
-        if(newsIds.isEmpty()){
+        if (newsIds.isEmpty()) {
             return new ResponseMessage(page);
         }
         List<NewsBasicRes> newsBasicResList = newsService.NewsListToBasicRes(newsService.listByIds(newsIds));

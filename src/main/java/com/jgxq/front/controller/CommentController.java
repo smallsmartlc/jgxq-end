@@ -52,7 +52,7 @@ public class CommentController {
         commentService.save(comment);
 
         try {
-            if (commentReq.getType() == ObjectType.TALK.getValue()) {
+            if (commentReq.getTarget()!=null && !userkey.equals(commentReq.getTarget())) {
                 messageService.sendCommentMessage(userkey, commentReq.getTarget(), commentReq.getType(), commentReq.getObjectId(), commentReq.getContent());
             }
         }catch (Exception e){
