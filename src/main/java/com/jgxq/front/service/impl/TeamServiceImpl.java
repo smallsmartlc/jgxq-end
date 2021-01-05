@@ -57,7 +57,7 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, Team> implements Te
         QueryWrapper<Team> userQuery = new QueryWrapper<>();
         userQuery.select("id","name","logo"
                 ,"(SELECT count(id) from user as u where team.id = u.home_team) as fans ")
-                .orderByDesc("fans");
+                .orderByDesc("fans").orderByAsc("id");
         teamMapper.selectPage(page, userQuery);
         return page;
     }

@@ -82,7 +82,7 @@ public class TeamController {
             res.add(teamBasic);
         });
 
-        return new ResponseMessage(new PageResponse<TeamBasicRes>(res, pageNum, pageSize, page.getTotal()));
+        return new ResponseMessage(new PageResponse(res, pageNum, pageSize, page.getTotal()));
 
     }
 

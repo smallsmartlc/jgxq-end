@@ -1,6 +1,7 @@
 package com.jgxq.front.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jgxq.common.res.CollectNewsRes;
 import com.jgxq.common.res.NewsBasicRes;
@@ -10,6 +11,7 @@ import com.jgxq.core.anotation.UserPermissionConf;
 import com.jgxq.core.resp.ResponseMessage;
 import com.jgxq.front.entity.Collect;
 import com.jgxq.front.entity.Focus;
+import com.jgxq.front.entity.User;
 import com.jgxq.front.service.impl.CollectServiceImpl;
 import com.jgxq.front.service.impl.FocusServiceImpl;
 import com.jgxq.front.service.impl.NewsServiceImpl;
@@ -44,6 +46,15 @@ public class UserController {
 
     @Autowired
     private NewsServiceImpl newsService;
+
+    @PutMapping("homeTeam/{teamId}")
+    public ResponseMessage updateHomeTeam(@PathVariable("teamId") Integer teamId,
+                                       @RequestAttribute("userKey") String userKey){
+        UpdateWrapper<User> userUpdate = new UpdateWrapper<>();
+        userUpdate.set("home_team",teamId).eq("userkey",userKey);
+        boolean flag = userService.update(userUpdate);
+        return new ResponseMessage(flag);
+    }
 
     @GetMapping("info")
     public ResponseMessage getUserInfo(@RequestParam(value = "target", required = false) String target,
