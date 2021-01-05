@@ -10,6 +10,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.mail.MailSendException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingPathVariableException;
@@ -19,6 +20,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import javax.mail.MessagingException;
+import javax.mail.SendFailedException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolation;
@@ -116,6 +119,18 @@ public class TeamworkGlobalExceptionHandler {
     public ErrorMessage onHttpRequestMethodNotSupportedException(HttpServletRequest request, HttpServletResponse response, Exception exception) {
 
         return new ErrorMessage(CommonErrorCode.HTTP_METHOD_NOT_SUPPORTED.getErrorCode(), exception.getMessage());
+    }
+
+    @ExceptionHandler({SendFailedException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorMessage onSendFailedException(){
+        return new ErrorMessage(CommonErrorCode.BAD_PARAMETERS.getErrorCode(),"邮件发送失败,检查邮箱是否正确");
+    }
+
+    @ExceptionHandler({MailSendException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorMessage onMessagingException(){
+        return new ErrorMessage(CommonErrorCode.BAD_PARAMETERS.getErrorCode(),"邮件发送失败,检查邮箱是否正确");
     }
 
     @ExceptionHandler({Exception.class})

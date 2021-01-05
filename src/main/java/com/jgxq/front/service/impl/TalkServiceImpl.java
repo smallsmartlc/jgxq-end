@@ -62,7 +62,7 @@ public class TalkServiceImpl extends ServiceImpl<TalkMapper, Talk> implements Ta
         QueryWrapper<Talk> talkQuery = new QueryWrapper<>();
         String[] selectSql = new String[4];
         selectSql[0] = "id";
-        selectSql[1] = "(select count(*) from comment where comment.object_id = talk.id and comment.type = " + ObjectType.TALK.getValue() + " and status = 1) as comments";
+        selectSql[1] = "(select count(*) from comment where comment.object_id = talk.id and parent_id = 0 and comment.type = " + ObjectType.TALK.getValue() + " and status = 1) as comments";
         selectSql[2] = "(select count(*) from thumb where thumb.object_id = talk.id and thumb.type = " + InteractionType.TALK.getValue() + ") as thumbs";
         if (logged) {
             selectSql[3] = "(select count(*) from thumb where thumb.object_id = talk.id and thumb.type = " + InteractionType.TALK.getValue() + " and thumb.userkey = '" + userKey + "') as has_thumb";

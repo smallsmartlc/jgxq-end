@@ -32,6 +32,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
+import javax.mail.SendFailedException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -69,11 +70,11 @@ public class AuthController {
     private RedisCache cache;
 
     @GetMapping
-    public ResponseMessage checkUser(@RequestAttribute(value = "userKey",required = false) String userKey){
-        if(userKey == null){
+    public ResponseMessage checkUser(@RequestAttribute(value = "userKey", required = false) String userKey) {
+        if (userKey == null) {
             return new ResponseMessage(null);
         }
-        User user = userService.getUserByPK("userkey",userKey);
+        User user = userService.getUserByPK("userkey", userKey);
         UserLoginRes userRes = new UserLoginRes();
         BeanUtils.copyProperties(user, userRes);
         userRes.setAuthor(user.getAuthor().equals(BooleanEnum.True.getValue()));
@@ -100,6 +101,8 @@ public class AuthController {
         //发送邮件
         try {
             mailSender.sendVerificationCode(email, code, type);
+        } catch (SendFailedException e) {
+            return new ResponseMessage(ForumErrorCode.Email_Send_Error, "邮件发送失败,检查邮箱是否存在");
         } catch (MessagingException e) {
             return new ResponseMessage(ForumErrorCode.Email_Send_Error, "邮件发送失败");
         }
@@ -107,9 +110,9 @@ public class AuthController {
     }
 
     @PostMapping("logout")
-    public ResponseMessage logout(HttpServletRequest request,HttpServletResponse response) throws IOException {
+    public ResponseMessage logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Cookie[] cookies = request.getCookies();
-        if(cookies != null){
+        if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if ((JwtUtil.JG_COOKIE).equals(cookie.getName())) {
                     cookie.setPath("/");
@@ -162,7 +165,7 @@ public class AuthController {
     }
 
 
-        @PostMapping("register")
+    @PostMapping("register")
     public ResponseMessage register(@RequestBody @Validated UserRegReq userReq) {
 
         String key = LoginUtils.emailToRedisKey(userReq.getEmail(), VerificationCodeType.REG);
@@ -250,8 +253,8 @@ public class AuthController {
         boolean flag = userService.updatePassword(userReq);
         if (flag) {
             cache.delete(key);
-        }else {
-            throw new SmartException(CommonErrorCode.BAD_PARAMETERS.getErrorCode(),"该账户不存在!!");
+        } else {
+            throw new SmartException(CommonErrorCode.BAD_PARAMETERS.getErrorCode(), "该账户不存在!!");
         }
         return new ResponseMessage(flag);
     }

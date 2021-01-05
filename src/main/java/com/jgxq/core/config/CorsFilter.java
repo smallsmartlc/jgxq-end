@@ -17,9 +17,9 @@ import java.util.Enumeration;
  * @author LuCong
  * @since 2020-12-30
  **/
-@Component
-@WebFilter
-@Order(Integer.MIN_VALUE)
+//@Component
+//@WebFilter
+//@Order(Integer.MIN_VALUE)
 public class CorsFilter implements Filter {
 
     @Override
@@ -28,7 +28,7 @@ public class CorsFilter implements Filter {
 
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
-        response.setHeader("Access-Control-Allow-Origin", (request.getHeader("Origin")==null)?"*":request.getHeader("Origin"));
+        response.setHeader("Access-Control-Allow-Origin", "*");
 
         response.setHeader("Access-Control-Allow-Credentials", "true");
 
