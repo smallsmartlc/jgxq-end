@@ -60,6 +60,19 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News> implements Ne
     }
 
     @Override
+    public Page<NewsBasicRes> pageAuthorNews(Integer pageNum, Integer pageSize, String userKey) {
+        Page<News> page = new Page<>(pageNum, pageSize);
+        QueryWrapper<News> wrapper = new QueryWrapper<>();
+        wrapper.select("id", "title", "cover").eq("author",userKey)
+                .orderByDesc("create_at");
+        newsMapper.selectPage(page, wrapper);
+        List<NewsBasicRes> newsBasicList = NewsListToBasicRes(page.getRecords());
+        Page<NewsBasicRes> resPage = new Page<>(page.getCurrent(), page.getSize(), page.getTotal());
+        resPage.setRecords(newsBasicList);
+        return resPage;
+    }
+
+    @Override
     public Page<NewsBasicRes> pageNewsByTag(Integer pageNum, Integer pageSize, Integer objectId, Integer objectType) {
         Page<News> page = new Page<>(pageNum, pageSize);
         QueryWrapper<News> wrapper = new QueryWrapper<>();
@@ -129,7 +142,7 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News> implements Ne
         List<Integer> ids = new ArrayList<>();
         try {
             ids = redisCache.lrangeInt(RedisKeys.top_news.getKey());
-        }catch (Exception e){
+        } catch (Exception e) {
             System.err.println("redis服务器异常");
         }
         if (!ids.isEmpty()) {
@@ -137,7 +150,7 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News> implements Ne
             newsQuery.select("id", "title", "cover")
                     .in("id", ids)
                     .le("create_at", new Date(System.currentTimeMillis()));
-            if(size != null){
+            if (size != null) {
                 newsQuery.last("limit " + size);
             }
             res = newsMapper.selectList(newsQuery);

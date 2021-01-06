@@ -16,5 +16,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface NewsService extends IService<News> {
     Page<NewsBasicRes> pageNews(Integer pageNum, Integer pageSize);
 
+    Page<NewsBasicRes> pageAuthorNews(Integer pageNum, Integer pageSize, String userKey);
+
     Page<NewsBasicRes> pageNewsByTag(Integer pageNum, Integer pageSize, Integer objectId,Integer objectType);
 }

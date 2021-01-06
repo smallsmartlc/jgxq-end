@@ -136,6 +136,14 @@ public class NewsController {
         return new ResponseMessage(list);
     }
 
+    @GetMapping("page/author/{pageNum}/{pageSize}")
+    public ResponseMessage pageAuthorNews(@PathVariable("pageNum") Integer pageNum,
+                                          @PathVariable("pageSize") Integer pageSize,
+                                          @RequestAttribute("userKey") String userKey) {
+        Page<NewsBasicRes> list = newsService.pageAuthorNews(pageNum, pageSize,userKey);
+        return new ResponseMessage(list);
+    }
+
     @GetMapping("page/tag/{pageNum}/{pageSize}")
     @AllowAccess
     public ResponseMessage pageNews(@PathVariable("pageNum") Integer pageNum,

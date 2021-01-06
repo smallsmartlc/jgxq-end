@@ -8,6 +8,7 @@ import com.jgxq.common.res.*;
 import com.jgxq.common.utils.LoginUtils;
 import com.jgxq.common.utils.PasswordHash;
 import com.jgxq.core.entity.AuthContext;
+import com.jgxq.front.define.BooleanEnum;
 import com.jgxq.front.define.KeyLength;
 import com.jgxq.front.entity.*;
 import com.jgxq.front.mapper.CommentMapper;
@@ -141,6 +142,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         TeamBasicRes team = teamService.getBasicTeamById(user.getHomeTeam());
         UserLoginRes userRes = new UserLoginRes();
         BeanUtils.copyProperties(user,userRes);
+        userRes.setAuthor(user.getAuthor().equals(BooleanEnum.True.getValue()));
         userRes.setHomeTeam(team);
         return userRes;
     }

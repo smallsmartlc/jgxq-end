@@ -5,20 +5,13 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jgxq.common.req.PasswordModifyReq;
 import com.jgxq.common.req.UserUpdateReq;
-import com.jgxq.common.res.CollectNewsRes;
-import com.jgxq.common.res.NewsBasicRes;
-import com.jgxq.common.res.UserActiveRes;
-import com.jgxq.common.res.UserFocusRes;
+import com.jgxq.common.res.*;
 import com.jgxq.common.utils.PasswordHash;
 import com.jgxq.core.anotation.UserPermissionConf;
 import com.jgxq.core.resp.ResponseMessage;
-import com.jgxq.front.entity.Collect;
-import com.jgxq.front.entity.Focus;
-import com.jgxq.front.entity.User;
-import com.jgxq.front.service.impl.CollectServiceImpl;
-import com.jgxq.front.service.impl.FocusServiceImpl;
-import com.jgxq.front.service.impl.NewsServiceImpl;
-import com.jgxq.front.service.impl.UserServiceImpl;
+import com.jgxq.front.define.InteractionType;
+import com.jgxq.front.entity.*;
+import com.jgxq.front.service.impl.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -52,11 +45,40 @@ public class UserController {
     @Autowired
     private NewsServiceImpl newsService;
 
+    @Autowired
+    private CommentServiceImpl commentService;
+
+    @Autowired
+    private ThumbServiceImpl thumbService;
+
 //    @PostMapping("modifyPassword")
 //    public ResponseMessage modifyPassword(@RequestBody @Validated PasswordModifyReq userReq,
 //                                          @RequestAttribute("userKey") String userKey) throws InvalidKeySpecException, NoSuchAlgorithmException {
 //
 //    }
+
+    @GetMapping("/authorInfo")
+    public ResponseMessage getAuthorInfo(@RequestAttribute("userKey") String userKey){
+        QueryWrapper<News> newsQuery = new QueryWrapper<>();
+        newsQuery.select("id").eq("author",userKey);
+        List<News> newsList = newsService.list(newsQuery);
+        List<Integer> newsIds = newsList.stream().map(News::getId).collect(Collectors.toList());
+        QueryWrapper<Thumb> thumbQuery = new QueryWrapper<>();
+        thumbQuery.eq("type", InteractionType.NEWS.getValue()).in("object_id",newsIds);
+        Integer thumbs = thumbService.count(thumbQuery);
+        QueryWrapper<Comment> commentQuery = new QueryWrapper<>();
+        commentQuery.eq("type", InteractionType.NEWS.getValue()).in("object_id",newsIds);
+        Integer comments = commentService.count(commentQuery);
+        QueryWrapper<Collect> collectQuery = new QueryWrapper<>();
+        commentQuery.eq("type", InteractionType.NEWS.getValue()).in("obj_id",newsIds);
+        Integer collects = collectService.count(collectQuery);
+        AuthorInfoRes res = new AuthorInfoRes();
+        res.setPublishNum(newsIds.size());
+        res.setThumbs(thumbs);
+        res.setCollects(collects);
+        res.setComments(comments);
+        return new ResponseMessage(res);
+    }
 
     @PutMapping("info")
     public ResponseMessage updateUser(@RequestBody UserUpdateReq userReq,
