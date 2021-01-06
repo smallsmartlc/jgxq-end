@@ -3,11 +3,13 @@ package com.jgxq.front.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.jgxq.common.req.PasswordModifyReq;
 import com.jgxq.common.req.UserUpdateReq;
 import com.jgxq.common.res.CollectNewsRes;
 import com.jgxq.common.res.NewsBasicRes;
 import com.jgxq.common.res.UserActiveRes;
 import com.jgxq.common.res.UserFocusRes;
+import com.jgxq.common.utils.PasswordHash;
 import com.jgxq.core.anotation.UserPermissionConf;
 import com.jgxq.core.resp.ResponseMessage;
 import com.jgxq.front.entity.Collect;
@@ -19,9 +21,11 @@ import com.jgxq.front.service.impl.NewsServiceImpl;
 import com.jgxq.front.service.impl.UserServiceImpl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -47,6 +51,12 @@ public class UserController {
 
     @Autowired
     private NewsServiceImpl newsService;
+
+//    @PostMapping("modifyPassword")
+//    public ResponseMessage modifyPassword(@RequestBody @Validated PasswordModifyReq userReq,
+//                                          @RequestAttribute("userKey") String userKey) throws InvalidKeySpecException, NoSuchAlgorithmException {
+//
+//    }
 
     @PutMapping("info")
     public ResponseMessage updateUser(@RequestBody UserUpdateReq userReq,

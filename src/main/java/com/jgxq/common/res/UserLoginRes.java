@@ -15,6 +15,8 @@ import java.util.Date;
 @NoArgsConstructor
 public class UserLoginRes {
 
+    private String email;
+
     private String userkey;
 
     private String nickName;
