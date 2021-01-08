@@ -2,6 +2,7 @@ package com.jgxq.front.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jgxq.common.dto.NewsHit;
 import com.jgxq.common.req.NewsReq;
@@ -58,42 +59,52 @@ public class NewsController {
         News news = new News();
         BeanUtils.copyProperties(newsReq, news);
         news.setAuthor(userKey);
-        newsService.save(news);
-        List<Tag> tagList = newsReq.getTags().stream().map(t -> {
-            Tag tag = new Tag();
-            BeanUtils.copyProperties(t, tag);
-            tag.setNewsId(news.getId());
-            tag.setObjectType(t.getType().byteValue());
-            return tag;
-        }).collect(Collectors.toList());
-        tagService.saveBatch(tagList);
+        boolean flag = newsService.save(news);
+        if(flag){
+            List<Tag> tagList = newsReq.getTags().stream().map(t -> {
+                Tag tag = new Tag();
+                BeanUtils.copyProperties(t, tag);
+                tag.setNewsId(news.getId());
+                tag.setObjectType(t.getType().byteValue());
+                return tag;
+            }).collect(Collectors.toList());
+            tagService.saveBatch(tagList);
+        }
         return new ResponseMessage(news.getId());
     }
 
     @PutMapping("{id}")
     @Transactional
     public ResponseMessage updateNews(@PathVariable("id") Integer id,
-                                      @RequestBody @Validated NewsReq newsReq) {
+                                      @RequestBody @Validated NewsReq newsReq,
+                                      @RequestAttribute("userKey") String userKey) {
         News news = new News();
         BeanUtils.copyProperties(newsReq, news);
-        news.setId(id);
-        boolean flag = newsService.updateById(news);
-        QueryWrapper<Tag> tagQuery = new QueryWrapper<>();
-        tagQuery.eq("news_id", id);
-        tagService.remove(tagQuery);
-        List<Tag> tagList = newsReq.getTags().stream().map(t -> {
-            Tag tag = new Tag();
-            BeanUtils.copyProperties(t, tag);
-            tag.setNewsId(news.getId());
-            return tag;
-        }).collect(Collectors.toList());
-        tagService.saveBatch(tagList);
+        UpdateWrapper<News> newsUpdate = new UpdateWrapper<>();
+        newsUpdate.eq("id",id).eq("author",userKey);
+        boolean flag = newsService.update(news,newsUpdate);
+        if(flag){
+            QueryWrapper<Tag> tagQuery = new QueryWrapper<>();
+            tagQuery.eq("news_id", id);
+            tagService.remove(tagQuery);
+            List<Tag> tagList = newsReq.getTags().stream().map(t -> {
+                Tag tag = new Tag();
+                BeanUtils.copyProperties(t, tag);
+                tag.setObjectType(t.getType().byteValue());
+                tag.setNewsId(id);
+                return tag;
+            }).collect(Collectors.toList());
+            tagService.saveBatch(tagList);
+        }
         return new ResponseMessage(flag);
     }
 
     @DeleteMapping("{id}")
-    public ResponseMessage deleteNews(@PathVariable("id") Integer id) {
-        boolean flag = newsService.removeById(id);
+    public ResponseMessage deleteNews(@PathVariable("id") Integer id,
+                                      @RequestAttribute("userKey") String userKey) {
+        UpdateWrapper<News> newsUpdate = new UpdateWrapper<>();
+        newsUpdate.eq("id",id).eq("author",userKey);
+        boolean flag = newsService.remove(newsUpdate);
         QueryWrapper<Tag> tagQuery = new QueryWrapper<>();
         tagQuery.eq("news_id", id);
         tagService.remove(tagQuery);
