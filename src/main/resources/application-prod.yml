@@ -15,6 +15,7 @@ spring:
   redis:
     host: smallsmart.top
     port: 6379
+    password: lc200009
 
 JWTParam:
   cookieDomain: smallsmart.top
