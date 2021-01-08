@@ -1,8 +1,13 @@
 package com.jgxq.front.mapper;
 
+import com.jgxq.common.res.TagSearchRes;
 import com.jgxq.front.entity.Tag;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 /**
  * <p>
@@ -15,4 +20,11 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface TagMapper extends BaseMapper<Tag> {
 
+    @Select({
+        "SELECT id as object_id , 1 as type,name ,head_image as logo from player WHERE name like concat('%',#{keyword},'%')",
+        "union",
+        "Select id as object_id , 0 as type,name ,logo from team where name like concat('%',#{keyword},'%')",
+        "ORDER BY LENGTH(name) limit 10"
+    })
+    List<TagSearchRes> searchTag(@Param("keyword") String keyword);
 }

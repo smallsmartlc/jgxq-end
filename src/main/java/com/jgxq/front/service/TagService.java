@@ -1,8 +1,11 @@
 package com.jgxq.front.service;
 
 import com.jgxq.common.res.TagRes;
+import com.jgxq.common.res.TagSearchRes;
 import com.jgxq.front.entity.Tag;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
  * <p>
@@ -14,4 +17,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface TagService extends IService<Tag> {
     TagRes getTags(Integer newsId);
+
+    List<TagSearchRes> getTagList(Integer newsId);
+
+    List<TagSearchRes> searchTag(String keyword);
 }

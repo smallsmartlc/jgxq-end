@@ -7,6 +7,7 @@ import com.jgxq.common.req.PasswordModifyReq;
 import com.jgxq.common.req.UserUpdateReq;
 import com.jgxq.common.res.*;
 import com.jgxq.common.utils.PasswordHash;
+import com.jgxq.core.anotation.AuthorPermisson;
 import com.jgxq.core.anotation.UserPermissionConf;
 import com.jgxq.core.resp.ResponseMessage;
 import com.jgxq.front.define.InteractionType;
@@ -58,20 +59,26 @@ public class UserController {
 //    }
 
     @GetMapping("/authorInfo")
+    @AuthorPermisson
     public ResponseMessage getAuthorInfo(@RequestAttribute("userKey") String userKey){
         QueryWrapper<News> newsQuery = new QueryWrapper<>();
         newsQuery.select("id").eq("author",userKey);
         List<News> newsList = newsService.list(newsQuery);
         List<Integer> newsIds = newsList.stream().map(News::getId).collect(Collectors.toList());
-        QueryWrapper<Thumb> thumbQuery = new QueryWrapper<>();
-        thumbQuery.eq("type", InteractionType.NEWS.getValue()).in("object_id",newsIds);
-        Integer thumbs = thumbService.count(thumbQuery);
-        QueryWrapper<Comment> commentQuery = new QueryWrapper<>();
-        commentQuery.eq("type", InteractionType.NEWS.getValue()).in("object_id",newsIds);
-        Integer comments = commentService.count(commentQuery);
-        QueryWrapper<Collect> collectQuery = new QueryWrapper<>();
-        commentQuery.eq("type", InteractionType.NEWS.getValue()).in("obj_id",newsIds);
-        Integer collects = collectService.count(collectQuery);
+        int thumbs = 0;
+        int comments = 0;
+        int collects = 0;
+        if(!newsIds.isEmpty()){
+            QueryWrapper<Thumb> thumbQuery = new QueryWrapper<>();
+            thumbQuery.eq("type", InteractionType.NEWS.getValue()).in("object_id",newsIds);
+            thumbs = thumbService.count(thumbQuery);
+            QueryWrapper<Comment> commentQuery = new QueryWrapper<>();
+            commentQuery.eq("type", InteractionType.NEWS.getValue()).in("object_id",newsIds);
+            comments = commentService.count(commentQuery);
+            QueryWrapper<Collect> collectQuery = new QueryWrapper<>();
+            commentQuery.eq("type", InteractionType.NEWS.getValue()).in("obj_id",newsIds);
+            collects = collectService.count(collectQuery);
+        }
         AuthorInfoRes res = new AuthorInfoRes();
         res.setPublishNum(newsIds.size());
         res.setThumbs(thumbs);
