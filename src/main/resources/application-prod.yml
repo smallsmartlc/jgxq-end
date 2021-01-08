@@ -1,5 +1,5 @@
 server:
-  port: 6800
+  port: 9920
 
 spring:
   datasource:
@@ -15,19 +15,11 @@ spring:
   redis:
     host: smallsmart.top
     port: 6379
-    password: lc200009
 
 JWTParam:
-  cookieDomain: localhost
+  cookieDomain: smallsmart.top
   cookieSecure: false
-
-mybatis-plus:
-  configuration:
-    # 这个配置会将执行的sql打印出来，在开发或测试的时候可以用
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-
-
 
 # 静态资源存储地址
 web:
-  upload-path: E:/springuploads/
+  upload-path: file:/usr/springuploads/
