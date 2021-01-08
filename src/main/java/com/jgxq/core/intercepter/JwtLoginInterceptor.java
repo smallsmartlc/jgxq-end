@@ -3,9 +3,11 @@ package com.jgxq.core.intercepter;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.jgxq.common.utils.JwtUtil;
 import com.jgxq.core.anotation.AllowAccess;
+import com.jgxq.core.anotation.AuthorPermisson;
 import com.jgxq.core.anotation.UserPermissionConf;
 import com.jgxq.core.entity.AuthContext;
 import com.jgxq.core.enums.UserPermissionType;
+import com.jgxq.front.define.BooleanEnum;
 import com.jgxq.front.entity.User;
 import com.jgxq.front.sender.RedisCache;
 import com.jgxq.front.service.impl.UserServiceImpl;
@@ -134,6 +136,12 @@ public class JwtLoginInterceptor extends HandlerInterceptorAdapter {
         //  待优化传userkey方式
         //  优化完成,使用@RequestAttribute接收
         request.setAttribute("userKey", user.getUserkey());
+
+        //对作者权限验证
+        AuthorPermisson authorPermisson = handlerMethod.getMethodAnnotation(AuthorPermisson.class);
+        if(authorPermisson!=null && user.getAuthor().equals(BooleanEnum.False.getValue())){
+            return false;
+        }
         return true;
     }
 

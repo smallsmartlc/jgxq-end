@@ -5,10 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jgxq.common.dto.NewsHit;
 import com.jgxq.common.req.NewsReq;
-import com.jgxq.common.res.AuthorRes;
-import com.jgxq.common.res.NewsBasicRes;
-import com.jgxq.common.res.NewsRes;
-import com.jgxq.common.res.TagRes;
+import com.jgxq.common.res.*;
 import com.jgxq.core.anotation.AllowAccess;
 import com.jgxq.core.anotation.UserPermissionConf;
 import com.jgxq.core.enums.CommonErrorCode;
@@ -115,11 +112,11 @@ public class NewsController {
             return new ResponseMessage(CommonErrorCode.BAD_PARAMETERS.getErrorCode(), "没有该记录");
         }
         AuthorRes authorInfo = userService.getAuthorInfo(news.getAuthor());
-        TagRes tagRes = tagService.getTags(id);
+        List<TagSearchRes> tagList = tagService.getTagList(id);
         NewsRes newsRes = new NewsRes();
         BeanUtils.copyProperties(news, newsRes);
         newsRes.setAuthor(authorInfo);
-        newsRes.setTag(tagRes);
+        newsRes.setTags(tagList);
 
         NewsHit hit = newsService.getHitById(news.getId(), userKey);
         newsRes.setHit(hit);

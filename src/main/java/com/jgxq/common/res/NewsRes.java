@@ -4,6 +4,7 @@ import com.jgxq.common.dto.NewsHit;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -34,7 +35,7 @@ public class NewsRes{
     /**
      * 存储tag
      */
-    private TagRes tag;
+    private List<TagSearchRes> tags;
 
     private Date createAt;
 
