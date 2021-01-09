@@ -150,9 +150,11 @@ public class AuthController {
         }
         String host = request.getServerName();
         if (!CookieUtils.LOCALHOST.equals(host)) {
-            cookie.setDomain(host.substring(host.indexOf(".") + 1));
+//            cookie.setDomain(host.substring(host.indexOf(".") + 1));
+            cookie.setDomain(host);
         }
         cookie.setPath("/");
+        cookie.setHttpOnly(false);
         response.addCookie(cookie);
         response.setHeader("Set-Cookie", response.getHeader("Set-Cookie") + "; SameSite=Lax");
         UserLoginRes userRes = new UserLoginRes();

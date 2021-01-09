@@ -72,7 +72,7 @@ public class MessageController {
     @GetMapping("message")
     public ResponseMessage hasMessage(@RequestAttribute(value = "userKey") String userKey) {
         QueryWrapper<Message> messageQuery = new QueryWrapper<>();
-        messageQuery.eq("`read`", ReadType.UNREAD.getValue()).last("limit 1");
+        messageQuery.eq("target",userKey).eq("`read`", ReadType.UNREAD.getValue()).last("limit 1");
         int newMessage = messageService.count(messageQuery);
         return new ResponseMessage(newMessage > 0);
     }
