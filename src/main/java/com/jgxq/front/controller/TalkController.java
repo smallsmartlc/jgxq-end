@@ -92,7 +92,7 @@ public class TalkController {
         Page<Talk> talkPage = new Page<>(pageNum, pageSize);
 
         QueryWrapper<Talk> talkQuery = new QueryWrapper<>();
-        talkQuery.orderByDesc("create_At");
+        talkQuery.orderByDesc("create_at");
 
         talkService.page(talkPage, talkQuery);
 
