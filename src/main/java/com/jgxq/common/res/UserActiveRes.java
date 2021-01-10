@@ -19,4 +19,6 @@ public class UserActiveRes {
 
     private Integer fans;
 
+    private boolean focused;
+
 }

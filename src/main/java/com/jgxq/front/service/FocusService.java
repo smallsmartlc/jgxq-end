@@ -5,6 +5,8 @@ import com.jgxq.common.res.UserFocusRes;
 import com.jgxq.front.entity.Focus;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
  * <p>
  * 服务类
@@ -15,5 +17,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface FocusService extends IService<Focus> {
 
-    Page<UserFocusRes> pageToResPage(Page<Focus> page, String userKey);
+    List<UserFocusRes> keyListToRes(List<String> keyList, String userKey);
 }

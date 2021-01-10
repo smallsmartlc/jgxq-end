@@ -3,6 +3,8 @@ package com.jgxq.front.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.jgxq.core.anotation.UserPermissionConf;
+import com.jgxq.core.enums.CommonErrorCode;
+import com.jgxq.core.exception.SmartException;
 import com.jgxq.core.resp.ResponseMessage;
 import com.jgxq.front.entity.Focus;
 import com.jgxq.front.service.FocusService;
@@ -30,6 +32,9 @@ public class FocusController {
     public ResponseMessage focus(@RequestParam("target") String target,
                                  @RequestAttribute(value = "userKey") String userKey,
                                  @RequestParam("focused") Boolean focused) {
+        if(target==userKey){
+            throw new SmartException(CommonErrorCode.BAD_PARAMETERS.getErrorCode(),"不能关注本人");
+        }
         boolean flag = false;
         if (focused) {
             QueryWrapper<Focus> focusQuery = new QueryWrapper<>();

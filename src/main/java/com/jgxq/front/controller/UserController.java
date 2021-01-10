@@ -3,10 +3,8 @@ package com.jgxq.front.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.jgxq.common.req.PasswordModifyReq;
 import com.jgxq.common.req.UserUpdateReq;
 import com.jgxq.common.res.*;
-import com.jgxq.common.utils.PasswordHash;
 import com.jgxq.core.anotation.AuthorPermisson;
 import com.jgxq.core.anotation.UserPermissionConf;
 import com.jgxq.core.resp.ResponseMessage;
@@ -15,11 +13,9 @@ import com.jgxq.front.entity.*;
 import com.jgxq.front.service.impl.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -113,8 +109,12 @@ public class UserController {
         if (target == null) {
             target = userKey;
         }
-
         UserActiveRes res = userService.getUserActiveRes(target);
+        if(target != userKey){
+            QueryWrapper<Focus> focusQuery = new QueryWrapper<>();
+            focusQuery.eq("userKey",userKey).eq("target",target);
+            res.setFocused(focusService.count(focusQuery)>0);
+        }
 
         return new ResponseMessage(res);
     }
@@ -134,7 +134,11 @@ public class UserController {
         if (page.getRecords().isEmpty()) {
             new ResponseMessage(page);
         }
-        Page<UserFocusRes> resPage = focusService.pageToResPage(page, userKey);
+        List<String> keyList = page.getRecords()
+                .stream().map(Focus::getTarget).collect(Collectors.toList());
+        List<UserFocusRes> reslist = focusService.keyListToRes(keyList, userKey);
+        Page<UserFocusRes> resPage = new Page<>(page.getCurrent(),page.getSize(),page.getTotal());
+        resPage.setRecords(reslist);
         return new ResponseMessage(resPage);
     }
 
@@ -153,7 +157,11 @@ public class UserController {
         if (page.getRecords().isEmpty()) {
             new ResponseMessage(page);
         }
-        Page<UserFocusRes> resPage = focusService.pageToResPage(page, userKey);
+        List<String> keyList = page.getRecords()
+                .stream().map(Focus::getUserkey).collect(Collectors.toList());
+        List<UserFocusRes> reslist = focusService.keyListToRes(keyList, userKey);
+        Page<UserFocusRes> resPage = new Page<>(page.getCurrent(),page.getSize(),page.getTotal());
+        resPage.setRecords(reslist);
         return new ResponseMessage(resPage);
     }
 

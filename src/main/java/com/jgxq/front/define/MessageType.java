@@ -3,7 +3,8 @@ package com.jgxq.front.define;
 public enum MessageType {
 
     thumb((byte) 0," 赞了我"),
-    comment((byte) 1," 回复了我：");
+    comment((byte) 1," 回复了我："),
+    focus((byte) 2," 关注了我");
 
 
     MessageType(byte value,String message) {

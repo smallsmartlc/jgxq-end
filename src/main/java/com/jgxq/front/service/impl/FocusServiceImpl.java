@@ -32,16 +32,7 @@ public class FocusServiceImpl extends ServiceImpl<FocusMapper, Focus> implements
     private UserServiceImpl userService;
 
     @Override
-    public Page<UserFocusRes> pageToResPage(Page<Focus> page,String userKey) {
-        List<Focus> records = page.getRecords();
-        List<String> keyList = records
-                .stream().map(Focus::getTarget).collect(Collectors.toList());
-        if (keyList.isEmpty()) {
-            Page resPage = new Page(page.getCurrent(), page.getSize(), page.getTotal());
-            resPage.setRecords(Collections.emptyList());
-            return resPage;
-        }
-
+    public List<UserFocusRes> keyListToRes(List<String> keyList,String userKey) {
         //当前用户是否关注
         QueryWrapper<Focus> userFocusQuery = new QueryWrapper<>();
         userFocusQuery.select("target")
@@ -61,9 +52,6 @@ public class FocusServiceImpl extends ServiceImpl<FocusMapper, Focus> implements
             res.setFocus(focusList.contains(u.getUserkey()));
             return res;
         }).collect(Collectors.toList());
-
-        Page<UserFocusRes> resPage = new Page<>(page.getCurrent(), page.getSize(), page.getTotal());
-        resPage.setRecords(resList);
-        return resPage;
+        return resList;
     }
 }
