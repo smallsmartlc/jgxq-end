@@ -34,6 +34,9 @@ public class FocusServiceImpl extends ServiceImpl<FocusMapper, Focus> implements
     @Override
     public List<UserFocusRes> keyListToRes(List<String> keyList,String userKey) {
         //当前用户是否关注
+        if(keyList.isEmpty()){
+            return Collections.emptyList();
+        }
         QueryWrapper<Focus> userFocusQuery = new QueryWrapper<>();
         userFocusQuery.select("target")
                 .eq("userkey", userKey)
