@@ -30,7 +30,7 @@ public class PlayerServiceImpl extends ServiceImpl<PlayerMapper, Player> impleme
     @Autowired
     private PlayerMapper playerMapper;
 
-    public List<PlayerBasicRes> geyBasicByIds(Collection<Integer> ids){
+    public List<PlayerBasicRes> getBasicByIds(Collection<Integer> ids){
         QueryWrapper<Player> wrapper = new QueryWrapper<>();
         wrapper.select("id","name","head_image")
                 .in("id",ids);

@@ -32,7 +32,6 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
     @Autowired
     private TagMapper tagMapper;
 
-
     @Autowired
     private TeamServiceImpl teamService;
 
@@ -56,7 +55,7 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
         }
         if(players!=null){
             List<Integer> playerIds = players.stream().map(Tag::getObjectId).collect(Collectors.toList());
-            List<PlayerBasicRes> playerList = playerService.geyBasicByIds(playerIds);
+            List<PlayerBasicRes> playerList = playerService.getBasicByIds(playerIds);
             tagRes.setPlayers(playerList);
         }
         return tagRes;
@@ -87,7 +86,7 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
         }
         if(players!=null){
             List<Integer> playerIds = players.stream().map(Tag::getObjectId).collect(Collectors.toList());
-            List<PlayerBasicRes> playerList = playerService.geyBasicByIds(playerIds);
+            List<PlayerBasicRes> playerList = playerService.getBasicByIds(playerIds);
             List<TagSearchRes> playerTags = playerList.stream().map(p -> {
                 TagSearchRes tag = new TagSearchRes();
                 tag.setType(TagType.PLAYER.getValue());
