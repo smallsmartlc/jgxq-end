@@ -106,7 +106,9 @@ public class PlayerController {
             PlayerTeam playerTeam = new PlayerTeam();
             BeanUtils.copyProperties(player, playerTeam);
             playerTeam.setPosition(player.getPosition().intValue());
-            playerTeam.setAge(DateUtils.getAgeByBirth(player.getBirthday()));
+            if(player.getBirthday()!=null){
+                playerTeam.setAge(DateUtils.getAgeByBirth(player.getBirthday()));
+            }
             return playerTeam;
         }).collect(Collectors.groupingBy((playerTeam -> Position.getPositionByVal(playerTeam.getPosition()))))
                 //转为map
