@@ -84,15 +84,25 @@ public class MatchController {
         MatchRes res = ResUtils.matchToMatchRes(match);
 
         NewsBasicRes newsBasic = null;
-        if(match.getMatchNews()!=null){
+        if (match.getMatchNews() != null) {
             News news = newsService.getById(match.getMatchNews());
-            newsBasic = new NewsBasicRes();
-            BeanUtils.copyProperties(news,newsBasic);
+            if(news != null){
+                newsBasic = new NewsBasicRes();
+                BeanUtils.copyProperties(news, newsBasic);
+            }
         }
         res.setMatchNews(newsBasic);
 
         TeamBasicRes homeTeam = teamService.getBasicTeamById(match.getHomeTeam());
         TeamBasicRes visitingTeam = teamService.getBasicTeamById(match.getVisitingTeam());
+        TeamBasicRes delete = new TeamBasicRes();
+        delete.setName("已删除");
+        if (homeTeam == null) {
+            homeTeam = delete;
+        }
+        if (visitingTeam == null) {
+            visitingTeam = delete;
+        }
         res.setHomeTeam(homeTeam);
         res.setVisitingTeam(visitingTeam);
 

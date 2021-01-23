@@ -80,11 +80,21 @@ public class MatchServiceImpl extends ServiceImpl<MatchMapper, Match> implements
         List<TeamBasicRes> teamList = teamService.getBasicTeamByIds(teamIds);
         Map<Integer, TeamBasicRes> map = teamList
                 .stream().collect(Collectors.toMap(TeamBasicRes::getId, v -> v));
+        TeamBasicRes delete = new TeamBasicRes();
+        delete.setName("已删除");
         List<MatchBasicRes> res = matchList.stream().map(t -> {
             MatchBasicRes match = new MatchBasicRes();
             BeanUtils.copyProperties(t, match);
-            match.setHomeTeam(map.get(t.getHomeTeam()));
-            match.setVisitingTeam(map.get(t.getVisitingTeam()));
+            TeamBasicRes homeTeam = map.get(t.getHomeTeam());
+            TeamBasicRes visitingTeam = map.get(t.getVisitingTeam());
+            if(homeTeam == null){
+                homeTeam = delete;
+            }
+            if(visitingTeam == null){
+                visitingTeam = delete;
+            }
+            match.setHomeTeam(homeTeam);
+            match.setVisitingTeam(visitingTeam);
             return match;
         }).collect(Collectors.toList());
         return res;

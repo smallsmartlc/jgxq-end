@@ -149,7 +149,8 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News> implements Ne
             QueryWrapper<News> newsQuery = new QueryWrapper<>();
             newsQuery.select("id", "title", "cover")
                     .in("id", ids)
-                    .le("create_at", new Date(System.currentTimeMillis()));
+                    .le("create_at", new Date(System.currentTimeMillis()))
+                    .orderByDesc("create_at");
             if (size != null) {
                 newsQuery.last("limit " + size);
             }
