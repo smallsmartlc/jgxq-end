@@ -140,7 +140,7 @@ public class JwtLoginInterceptor extends HandlerInterceptorAdapter {
         //对作者权限验证
         AuthorPermisson authorPermisson = handlerMethod.getMethodAnnotation(AuthorPermisson.class);
         if(authorPermisson!=null && user.getAuthor().equals(BooleanEnum.False.getValue())){
-            setRespError(response, HttpStatus.NO_CONTENT.value(), "暂无作者权限");
+            setRespError(response, HttpStatus.FORBIDDEN.value(), "暂无作者权限");
             return false;
         }
         return true;

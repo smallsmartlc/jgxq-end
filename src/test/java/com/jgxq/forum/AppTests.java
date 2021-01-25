@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.mail.MessagingException;
+import java.util.HashSet;
 
 @SpringBootTest
 class AppTests {
@@ -20,7 +21,10 @@ class AppTests {
 
     @Test
     void MessageTest(){
-
+        HashSet<String> set = new HashSet<>();
+        System.out.println(set.add("111"));
+        System.out.println(set.remove("111"));
+        System.out.println(set.remove("111"));
     }
 
     @Test
