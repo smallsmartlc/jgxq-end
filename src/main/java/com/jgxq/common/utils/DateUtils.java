@@ -245,4 +245,11 @@ public class DateUtils {
         return age;
     }
 
+
+    public static boolean sameDate(Date d1, Date d2) {
+        if (null == d1 || null == d2) return false;
+        if(d1 == d2) return true;
+        return initDateByDay(d1).getTime() == initDateByDay(d2).getTime();
+    }
+
 }

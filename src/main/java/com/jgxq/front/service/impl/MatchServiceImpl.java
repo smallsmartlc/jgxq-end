@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jgxq.common.res.MatchBasicRes;
 import com.jgxq.common.res.TeamBasicRes;
+import com.jgxq.common.utils.DateUtils;
 import com.jgxq.front.entity.Match;
 import com.jgxq.front.mapper.MatchMapper;
 import com.jgxq.front.service.MatchService;
@@ -43,7 +44,13 @@ public class MatchServiceImpl extends ServiceImpl<MatchMapper, Match> implements
         }
         Page page = new Page(pageNum,pageSize);
         matchMapper.selectPage(page,matchQuery);
-        List<MatchBasicRes> res = matchListToBasicRes(page.getRecords());
+        List<Match> matchList = page.getRecords();
+        if(matchList.isEmpty() && DateUtils.sameDate(new Date(),start)){
+            QueryWrapper<Match> tempQuery = new QueryWrapper<>();
+            tempQuery.lt("start_time",start).last("limit "+pageSize);
+            matchList = matchMapper.selectList(tempQuery);
+        }
+        List<MatchBasicRes> res = matchListToBasicRes(matchList);
         Page<MatchBasicRes> resPage = new Page<>(page.getCurrent(),page.getSize(),page.getTotal());
         resPage.setRecords(res);
         return resPage;
