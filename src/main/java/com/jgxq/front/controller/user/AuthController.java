@@ -225,7 +225,8 @@ public class AuthController {
         }
         String host = request.getServerName();
         if (!CookieUtils.LOCALHOST.equals(host)) {
-            cookie.setDomain(host.substring(host.indexOf(".") + 1));
+//            cookie.setDomain(host.substring(host.indexOf(".") + 1));
+            cookie.setDomain(host);
         }
         cookie.setPath("/");
         response.addCookie(cookie);
