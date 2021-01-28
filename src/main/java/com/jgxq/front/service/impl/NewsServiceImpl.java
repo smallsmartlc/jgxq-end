@@ -3,6 +3,7 @@ package com.jgxq.front.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jgxq.common.dto.NewsHit;
+import com.jgxq.common.req.TagReq;
 import com.jgxq.common.res.*;
 import com.jgxq.core.enums.RedisKeys;
 import com.jgxq.front.define.ObjectType;
@@ -63,7 +64,7 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News> implements Ne
     public Page<NewsBasicRes> pageAuthorNews(Integer pageNum, Integer pageSize, String userKey) {
         Page<News> page = new Page<>(pageNum, pageSize);
         QueryWrapper<News> wrapper = new QueryWrapper<>();
-        wrapper.select("id", "title", "cover").eq("author",userKey)
+        wrapper.select("id", "title", "cover").eq("author", userKey)
                 .orderByDesc("create_at");
         newsMapper.selectPage(page, wrapper);
         List<NewsBasicRes> newsBasicList = NewsListToBasicRes(page.getRecords());
@@ -85,6 +86,15 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News> implements Ne
         Page<NewsBasicRes> resPage = new Page<>(page.getCurrent(), page.getSize(), page.getTotal());
         resPage.setRecords(newsBasicList);
         return resPage;
+    }
+
+    public Page<NewsBasicRes> pageNewsByTags(Integer pageNum, Integer pageSize, List<TagReq> tags) {
+        Page<NewsBasicRes> page = new Page<>(pageNum, pageSize);
+        if(tags == null || tags.isEmpty()){
+            return page;
+        }
+        newsMapper.pageByTags(page, tags);
+        return page;
     }
 
     public List<NewsBasicRes> NewsListToBasicRes(List<News> list) {

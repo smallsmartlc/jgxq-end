@@ -21,9 +21,9 @@ import java.util.List;
 public interface TagMapper extends BaseMapper<Tag> {
 
     @Select({
-        "SELECT id as object_id , 1 as type,name ,head_image as logo from player WHERE name like concat('%',#{keyword},'%')",
+        "SELECT id as object_id , 1 as type,name ,head_image as logo from player WHERE name like concat('%',#{keyword},'%') and status = 1",
         "union",
-        "Select id as object_id , 0 as type,name ,logo from team where name like concat('%',#{keyword},'%')",
+        "Select id as object_id , 0 as type,name ,logo from team where name like concat('%',#{keyword},'%') and status = 1",
         "ORDER BY LENGTH(name) limit 10"
     })
     List<TagSearchRes> searchTag(@Param("keyword") String keyword);

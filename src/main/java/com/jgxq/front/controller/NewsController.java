@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jgxq.common.dto.NewsHit;
 import com.jgxq.common.req.NewsReq;
+import com.jgxq.common.req.TagReq;
 import com.jgxq.common.res.*;
 import com.jgxq.core.anotation.AllowAccess;
 import com.jgxq.core.anotation.UserPermissionConf;
@@ -60,7 +61,7 @@ public class NewsController {
         BeanUtils.copyProperties(newsReq, news);
         news.setAuthor(userKey);
         boolean flag = newsService.save(news);
-        if(flag){
+        if (flag) {
             List<Tag> tagList = newsReq.getTags().stream().map(t -> {
                 Tag tag = new Tag();
                 BeanUtils.copyProperties(t, tag);
@@ -81,9 +82,9 @@ public class NewsController {
         News news = new News();
         BeanUtils.copyProperties(newsReq, news);
         UpdateWrapper<News> newsUpdate = new UpdateWrapper<>();
-        newsUpdate.eq("id",id).eq("author",userKey);
-        boolean flag = newsService.update(news,newsUpdate);
-        if(flag){
+        newsUpdate.eq("id", id).eq("author", userKey);
+        boolean flag = newsService.update(news, newsUpdate);
+        if (flag) {
             QueryWrapper<Tag> tagQuery = new QueryWrapper<>();
             tagQuery.eq("news_id", id);
             tagService.remove(tagQuery);
@@ -103,7 +104,7 @@ public class NewsController {
     public ResponseMessage deleteNews(@PathVariable("id") Integer id,
                                       @RequestAttribute("userKey") String userKey) {
         UpdateWrapper<News> newsUpdate = new UpdateWrapper<>();
-        newsUpdate.eq("id",id).eq("author",userKey);
+        newsUpdate.eq("id", id).eq("author", userKey);
         boolean flag = newsService.remove(newsUpdate);
         QueryWrapper<Tag> tagQuery = new QueryWrapper<>();
         tagQuery.eq("news_id", id);
@@ -148,7 +149,7 @@ public class NewsController {
     public ResponseMessage pageAuthorNews(@PathVariable("pageNum") Integer pageNum,
                                           @PathVariable("pageSize") Integer pageSize,
                                           @RequestAttribute("userKey") String userKey) {
-        Page<NewsBasicRes> list = newsService.pageAuthorNews(pageNum, pageSize,userKey);
+        Page<NewsBasicRes> list = newsService.pageAuthorNews(pageNum, pageSize, userKey);
         return new ResponseMessage(list);
     }
 
@@ -160,6 +161,15 @@ public class NewsController {
                                     @RequestParam("type") Integer objectType) {
 
         Page<NewsBasicRes> list = newsService.pageNewsByTag(pageNum, pageSize, objectId, objectType);
+        return new ResponseMessage(list);
+    }
+
+    @PostMapping("page/tags/{pageNum}/{pageSize}")
+    public ResponseMessage pageNewsByTags(@PathVariable("pageNum") Integer pageNum,
+                                          @PathVariable("pageSize") Integer pageSize,
+                                          @RequestBody List<TagReq> tagList) {
+
+        Page<NewsBasicRes> list = newsService.pageNewsByTags(pageNum, pageSize, tagList);
         return new ResponseMessage(list);
     }
 

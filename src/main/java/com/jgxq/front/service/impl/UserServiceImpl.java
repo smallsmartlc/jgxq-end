@@ -189,6 +189,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         wrapper.select("userkey", "nick_name")
                 .eq("userkey", userKey);
         User user = userMapper.selectOne(wrapper);
+        if(user == null){
+            return null;
+        }
         AuthorRes res = new AuthorRes();
         res.setNickName(user.getNickName());
         res.setUserkey(userKey);
