@@ -171,6 +171,7 @@ public class NewsController {
     }
 
     @PostMapping("page/tags/{pageNum}/{pageSize}")
+    @AllowAccess
     public ResponseMessage pageNewsByTags(@PathVariable("pageNum") Integer pageNum,
                                           @PathVariable("pageSize") Integer pageSize,
                                           @RequestBody List<TagReq> tagList) {
