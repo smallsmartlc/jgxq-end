@@ -37,10 +37,10 @@ public class WebMvcConfig  implements WebMvcConfigurer {
     }
 
     //配置静态资源映射
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/images/**").addResourceLocations("file:" + mImagesPath);
-    }
+//    @Override
+//    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+//        registry.addResourceHandler("/images/**").addResourceLocations("file:" + mImagesPath);
+//    }
 
     //跨域
     @Override
