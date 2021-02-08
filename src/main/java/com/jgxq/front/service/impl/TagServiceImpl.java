@@ -8,8 +8,14 @@ import com.jgxq.common.res.TeamBasicRes;
 import com.jgxq.front.define.TagType;
 import com.jgxq.front.entity.Tag;
 import com.jgxq.front.mapper.TagMapper;
+import com.jgxq.front.sender.EsUtils;
 import com.jgxq.front.service.TagService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.MatchPhraseQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.TermQueryBuilder;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +43,9 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
 
     @Autowired
     private PlayerServiceImpl playerService;
+
+    @Autowired
+    private EsUtils esClient;
 
     @Override
     public TagRes getTags(Integer newsId){
@@ -102,13 +111,22 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
 
     @Override
     public List<TagSearchRes> searchTag(String keyword) {
-        //使用Sql做搜索
-        return tagMapper.searchTag(keyword);
+        return searchTagByEs(keyword);
+//        return tagMapper.searchTag(keyword);//使用Sql做搜索
     }
 
-    public List<TagSearchRes> searchTagByEs(String keyword) {
-        //TODO : 使用elasticsearch搜索
-        return null;
+    private List<TagSearchRes> searchTagByEs(String keyword) {
+        SearchSourceBuilder builder = new SearchSourceBuilder();
+
+        MatchPhraseQueryBuilder matchPhraseQuery = QueryBuilders.matchPhraseQuery("name.pinyin", keyword);
+        TermQueryBuilder termQueryBuilder = QueryBuilders.termQuery("status", "1");
+        BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+        boolQueryBuilder.must(matchPhraseQuery);
+        boolQueryBuilder.must(termQueryBuilder);
+
+        builder.query(boolQueryBuilder);
+        List<TagSearchRes> resList = esClient.search("jgxq_tag", builder, TagSearchRes.class, 10);
+        return resList;
     }
 
 }
