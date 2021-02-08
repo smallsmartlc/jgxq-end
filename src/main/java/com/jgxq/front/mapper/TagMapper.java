@@ -1,5 +1,6 @@
 package com.jgxq.front.mapper;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jgxq.common.res.TagSearchRes;
 import com.jgxq.front.entity.Tag;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -11,7 +12,7 @@ import java.util.List;
 
 /**
  * <p>
- *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author smallsmart
@@ -21,10 +22,18 @@ import java.util.List;
 public interface TagMapper extends BaseMapper<Tag> {
 
     @Select({
-        "SELECT id as object_id , 1 as type,name ,head_image as logo from player WHERE name like concat('%',#{keyword},'%') and status = 1",
-        "union",
-        "Select id as object_id , 0 as type,name ,logo from team where name like concat('%',#{keyword},'%') and status = 1",
-        "ORDER BY LENGTH(name) limit 10"
+            "SELECT id as object_id , 1 as type,name ,head_image as logo from player WHERE name like concat('%',#{keyword},'%') and status = 1",
+            "union",
+            "Select id as object_id , 0 as type,name ,logo from team where name like concat('%',#{keyword},'%') and status = 1",
+            "ORDER BY LENGTH(name) limit 10"
     })
     List<TagSearchRes> searchTag(@Param("keyword") String keyword);
+
+    @Select({
+            "SELECT id as object_id , 1 as type,name ,head_image as logo from player WHERE name like concat('%',#{keyword},'%') and status = 1",
+            "union",
+            "Select id as object_id , 0 as type,name ,logo from team where name like concat('%',#{keyword},'%') and status = 1",
+            "ORDER BY LENGTH(name)"
+    })
+    Page<TagSearchRes> pageTag(Page<TagSearchRes> page, @Param("keyword") String keyword);
 }

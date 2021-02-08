@@ -1,18 +1,15 @@
 package com.jgxq.front.controller;
 
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jgxq.common.res.TagSearchRes;
-import com.jgxq.core.anotation.UserPermissionConf;
 import com.jgxq.core.resp.ResponseMessage;
 import com.jgxq.front.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -29,9 +26,24 @@ public class TagController {
     @Autowired
     private TagService tagService;
 
+    @GetMapping("page/{pageNum}/{pageSize}")
+    public ResponseMessage pageTag(@PathVariable("pageNum") Integer pageNum,
+                                   @PathVariable("pageSize") Integer pageSize,
+                                   @RequestParam("keyword") String keyword){
+        Page<TagSearchRes> list = tagService.pageTag(pageNum,pageSize,keyword);
+        return new ResponseMessage(list);
+    }
+
     @GetMapping("search")
     public ResponseMessage searchTag(@RequestParam("keyword") String keyword){
         List<TagSearchRes> list = tagService.searchTag(keyword);
         return new ResponseMessage(list);
+    }
+
+    @GetMapping("recommend")
+    public ResponseMessage searchRecommend(@RequestParam("keyword") String keyword){
+        List<String> res = tagService.searchTag(keyword)
+                .stream().map(TagSearchRes::getName).collect(Collectors.toList());
+        return new ResponseMessage(res);
     }
 }

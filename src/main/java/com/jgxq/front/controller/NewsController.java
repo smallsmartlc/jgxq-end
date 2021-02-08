@@ -19,6 +19,7 @@ import com.jgxq.front.service.TagService;
 import com.jgxq.front.service.impl.NewsServiceImpl;
 import com.jgxq.front.service.impl.TeamServiceImpl;
 import com.jgxq.front.service.impl.UserServiceImpl;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -140,7 +141,12 @@ public class NewsController {
     @GetMapping("page/{pageNum}/{pageSize}")
     @AllowAccess
     public ResponseMessage pageNews(@PathVariable("pageNum") Integer pageNum,
-                                    @PathVariable("pageSize") Integer pageSize) {
+                                    @PathVariable("pageSize") Integer pageSize,
+                                    @RequestParam(value = "keyword", required = false) String keyword) {
+        if(!StringUtils.isEmpty(keyword)){
+            Page<NewsBasicRes> page = newsService.searchNewsPage(pageNum, pageSize,keyword);
+            return new ResponseMessage(page);
+        }
         Page<NewsBasicRes> list = newsService.pageNews(pageNum, pageSize);
         return new ResponseMessage(list);
     }

@@ -48,6 +48,9 @@ public class MatchServiceImpl extends ServiceImpl<MatchMapper, Match> implements
         if(matchList.isEmpty() && DateUtils.sameDate(new Date(),start)){
             QueryWrapper<Match> tempQuery = new QueryWrapper<>();
             tempQuery.lt("start_time",start).last("limit "+pageSize);
+            if(teamId!=null){
+                tempQuery.eq("home_team",teamId).or().eq("visiting_team",teamId);
+            }
             matchList = matchMapper.selectList(tempQuery);
         }
         List<MatchBasicRes> res = matchListToBasicRes(matchList);

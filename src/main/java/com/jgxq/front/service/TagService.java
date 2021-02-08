@@ -1,5 +1,6 @@
 package com.jgxq.front.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jgxq.common.res.TagRes;
 import com.jgxq.common.res.TagSearchRes;
 import com.jgxq.front.entity.Tag;
@@ -21,4 +22,6 @@ public interface TagService extends IService<Tag> {
     List<TagSearchRes> getTagList(Integer newsId);
 
     List<TagSearchRes> searchTag(String keyword);
+
+    Page<TagSearchRes> pageTag(Integer pageNum, Integer pageSize, String keyword);
 }

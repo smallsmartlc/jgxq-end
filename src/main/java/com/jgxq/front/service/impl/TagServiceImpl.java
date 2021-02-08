@@ -1,6 +1,7 @@
 package com.jgxq.front.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jgxq.common.res.PlayerBasicRes;
 import com.jgxq.common.res.TagRes;
 import com.jgxq.common.res.TagSearchRes;
@@ -9,7 +10,6 @@ import com.jgxq.front.define.TagType;
 import com.jgxq.front.entity.Tag;
 import com.jgxq.front.mapper.TagMapper;
 import com.jgxq.front.sender.EsUtils;
-import com.jgxq.front.service.TagService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.MatchPhraseQueryBuilder;
@@ -18,6 +18,7 @@ import org.elasticsearch.index.query.TermQueryBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.jgxq.front.service.TagService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -111,8 +112,28 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
 
     @Override
     public List<TagSearchRes> searchTag(String keyword) {
-        return searchTagByEs(keyword);
-//        return tagMapper.searchTag(keyword);//使用Sql做搜索
+//        return searchTagByEs(keyword);
+        return tagMapper.searchTag(keyword);//fixme 使用Sql做搜索
+    }
+
+    @Override
+    public Page<TagSearchRes> pageTag(Integer pageNum, Integer pageSize, String keyword) {
+//        return pageTeamEs(pageNum, pageSize, keyword);//es
+        return tagMapper.pageTag(new Page<>(pageNum,pageSize),keyword);//fixme sql
+    }
+
+    private Page<TagSearchRes> pageTeamEs(Integer pageNum, Integer pageSize, String keyword){
+        SearchSourceBuilder builder = new SearchSourceBuilder();
+
+        MatchPhraseQueryBuilder matchPhraseQuery = QueryBuilders.matchPhraseQuery("name.pinyin", keyword);
+        TermQueryBuilder termQueryBuilder = QueryBuilders.termQuery("status", "1");
+        BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+        boolQueryBuilder.must(matchPhraseQuery);
+        boolQueryBuilder.must(termQueryBuilder);
+
+        builder.query(boolQueryBuilder);
+        Page<TagSearchRes> page = esClient.search("jgxq_tag", builder, TagSearchRes.class, pageNum, pageSize);
+        return page;
     }
 
     private List<TagSearchRes> searchTagByEs(String keyword) {
