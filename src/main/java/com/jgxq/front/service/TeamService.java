@@ -20,4 +20,6 @@ public interface TeamService extends IService<Team> {
     Page<Team> pageTeamsByHeat(Integer pageNum, Integer pageSize);
 
     TeamBasicRes getBasicTeamById(Integer id);
+
+    Page<TeamBasicRes> searchTeam(Integer pageNum, Integer pageSize, String keyword);
 }

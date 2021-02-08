@@ -13,6 +13,7 @@ import com.jgxq.front.define.TeamSort;
 import com.jgxq.front.entity.Team;
 import com.jgxq.front.service.TeamService;
 import com.jgxq.front.util.ReqUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -65,8 +66,12 @@ public class TeamController {
     @GetMapping("page/{pageNum}/{pageSize}")
     public ResponseMessage PageTeams(@PathVariable("pageNum") Integer pageNum,
                                      @PathVariable("pageSize") Integer pageSize,
-                                     @RequestParam(value = "sort",defaultValue = "NO") TeamSort sort) {
-
+                                     @RequestParam(value = "sort",defaultValue = "NO") TeamSort sort,
+                                     @RequestParam(value = "keyword",required = false) String keyword) {
+        if(!StringUtils.isEmpty(keyword)){
+            Page<TeamBasicRes> page = teamService.searchTeam(pageNum, pageSize,keyword);
+            return new ResponseMessage(new PageResponse<>(page.getRecords(), pageNum, pageSize, page.getTotal()));
+        }
         Page<Team> page = null;
         if(sort == TeamSort.NO){
             page = teamService.pageTeams(pageNum, pageSize);

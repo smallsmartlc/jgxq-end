@@ -15,7 +15,9 @@ spring:
   redis:
     host: 127.0.0.1
     port: 6379
-
+  elasticsearch:
+    rest:
+      uris: ["http://127.0.0.1:9200"]
 JWTParam:
   cookieDomain: localhost
   cookieSecure: false
