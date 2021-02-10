@@ -2,7 +2,7 @@ spring:
   application:
     name: forum
   profiles:
-    active: dev
+    active: prod
   servlet:
     multipart:
       max-request-size: 10MB

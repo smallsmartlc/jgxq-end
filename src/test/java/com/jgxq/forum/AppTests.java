@@ -1,20 +1,38 @@
 package com.jgxq.forum;
 
+import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.jgxq.common.res.PlayerTeamRes;
+import com.jgxq.core.resp.ResponseMessage;
+import com.jgxq.front.controller.PlayerController;
+import com.jgxq.front.controller.TeamController;
+import com.jgxq.front.define.MatchPosition;
+import com.jgxq.front.define.Position;
 import com.jgxq.front.define.VerificationCodeType;
+import com.jgxq.front.entity.Player;
+import com.jgxq.front.mapper.PlayerMapper;
 import com.jgxq.front.sender.JGMailSender;
 import com.jgxq.front.service.impl.MessageServiceImpl;
+import com.jgxq.front.service.impl.PlayerServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.mail.MessagingException;
 import java.util.HashSet;
+import java.util.List;
 
 @SpringBootTest
 class AppTests {
 
     @Autowired
     private JGMailSender mailSender;
+
+    @Autowired
+    private PlayerMapper playerMapper;
+
+    @Autowired
+    private PlayerServiceImpl playerService;
 
     @Autowired
     MessageServiceImpl messageService;
@@ -25,6 +43,35 @@ class AppTests {
         System.out.println(set.add("111"));
         System.out.println(set.remove("111"));
         System.out.println(set.remove("111"));
+    }
+
+    @Test
+    void teamStringTest(){
+        QueryWrapper<Player> playerQuery = new QueryWrapper<Player>();
+        playerQuery.eq("team",1);
+        List<Player> players = playerMapper.selectList(playerQuery);
+        System.out.println("------------");
+        for (Player player : players) {
+            System.out.println(player.getName()+": [jgxq]"+player.getId());
+        }
+    }
+
+    @Test
+    void addMatchPlayer(){
+        String source =
+                "[{\"name\":\"顾添承\",\"number\":\"2\"},{\"name\":\"杨华钦\",\"number\":\"3\"},{\"name\":\"周创\",\"number\":\"5\"},{\"name\":\"徐翔\",\"number\":\"9\"},{\"name\":\"白云飞\",\"number\":\"12\"},{\"name\":\"杨海峰\",\"number\":\"17\"},{\"name\":\"谭渝川\",\"number\":\"18\"},{\"name\":\"吴浩玮\",\"number\":\"20\"},{\"name\":\"龚锐\",\"number\":\"21\"},{\"name\":\"杨卓凡\",\"number\":\"22\"},{\"name\":\"曾柯\",\"number\":\"23\"},{\"name\":\"夏天\",\"number\":\"1\"},{\"name\":\"伊布热依木·约麦尔\",\"number\":\"19\"},{\"name\":\"胡安勇\",\"number\":\"35\"}]";
+        List<Player> players = JSON.parseArray(source, Player.class);
+        for (int i = 0; i < players.size(); i++) {
+            players.get(i).setEnName("");
+            players.get(i).setInfos("{\"normal\": [{\"name\": \"身价\", \"value\": \"60万欧元\"}]}");
+            players.get(i).setTeam(27);
+            players.get(i).setPosition((byte) Position.AM.getValue());
+            players.get(i).setWeight(0);
+            players.get(i).setHeight(0);
+            players.get(i).setStrongFoot((byte)0);
+        }
+        playerService.saveBatch(players);
+
     }
 
     @Test
