@@ -43,19 +43,6 @@ public class PlayerController {
     @Autowired
     private TeamServiceImpl teamService;
 
-    @PostMapping
-    public ResponseMessage addPlayer(@RequestBody @Validated PlayerReq playerReq) {
-        String infos = JSON.toJSONString(playerReq.getInfos());
-
-        Player player = new Player();
-        player.setInfos(infos);
-        BeanUtils.copyProperties(playerReq, player);
-
-        playerService.save(player);
-
-        return new ResponseMessage(player.getId());
-    }
-
     @PutMapping("{id}")
     public ResponseMessage updatePlayer(@PathVariable("id") Integer id,
                                         @RequestBody @Validated PlayerReq playerReq) {
@@ -68,12 +55,6 @@ public class PlayerController {
 
         boolean flag = playerService.updateById(player);
 
-        return new ResponseMessage(flag);
-    }
-
-    @DeleteMapping("{id}")
-    public ResponseMessage deletePlayer(@PathVariable("id") Integer id) {
-        boolean flag = playerService.removeById(id);
         return new ResponseMessage(flag);
     }
 

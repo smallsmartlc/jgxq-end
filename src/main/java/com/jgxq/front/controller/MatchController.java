@@ -49,32 +49,6 @@ public class MatchController {
     @Autowired
     private NewsServiceImpl newsService;
 
-    @PostMapping
-    public ResponseMessage addMatch(@RequestBody @Validated MatchReq matchReq) {
-
-        Match match = ReqUtils.matchReqToMatch(matchReq);
-        matchService.save(match);
-
-        return new ResponseMessage(match.getId());
-    }
-
-    @PutMapping("{id}")
-    public ResponseMessage updateMatch(@PathVariable("id") Integer id,
-                                       @RequestBody @Validated MatchReq matchReq) {
-
-        Match match = ReqUtils.matchReqToMatch(matchReq);
-        match.setId(id);
-        boolean flag = matchService.updateById(match);
-
-        return new ResponseMessage(flag);
-    }
-
-    @DeleteMapping("{id}")
-    public ResponseMessage deleteMatch(@PathVariable("id") Integer id) {
-        boolean remove = matchService.removeById(id);
-        return new ResponseMessage(remove);
-    }
-
     @GetMapping("{id}")
     public ResponseMessage getMatch(@PathVariable("id") Integer id) {
         Match match = matchService.getById(id);

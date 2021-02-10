@@ -38,31 +38,6 @@ public class TeamController {
     @Autowired
     private TeamService teamService;
 
-    @PostMapping
-    public ResponseMessage addTeam(@RequestBody @Validated TeamReq teamReq) {
-
-        Team team = ReqUtils.teamReqToTeam(teamReq);
-        teamService.save(team);
-
-        return new ResponseMessage(team.getId());
-    }
-
-    @PutMapping("{id}")
-    public ResponseMessage updateTeamInfo(@PathVariable("id") Integer id,
-                                          @RequestBody @Validated TeamReq teamReq) {
-        Team team = ReqUtils.teamReqToTeam(teamReq);
-        team.setId(id);
-        boolean flag = teamService.updateById(team);
-
-        return new ResponseMessage(flag);
-    }
-
-    @DeleteMapping("{id}")
-    public ResponseMessage deleteTeamById(@PathVariable("id") Integer id) {
-        boolean flag = teamService.removeById(id);
-        return new ResponseMessage(flag);
-    }
-
     @GetMapping("page/{pageNum}/{pageSize}")
     public ResponseMessage PageTeams(@PathVariable("pageNum") Integer pageNum,
                                      @PathVariable("pageSize") Integer pageSize,
