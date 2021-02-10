@@ -10,10 +10,12 @@ import com.jgxq.common.req.PlayerReq;
 import com.jgxq.common.res.PlayerRes;
 import com.jgxq.common.res.PlayerTeamRes;
 import com.jgxq.common.utils.DateUtils;
+import com.jgxq.core.enums.RedisKeys;
 import com.jgxq.core.resp.ResponseMessage;
 import com.jgxq.front.define.Position;
 import com.jgxq.front.define.StrongFoot;
 import com.jgxq.front.entity.Player;
+import com.jgxq.front.sender.RedisCache;
 import com.jgxq.front.service.PlayerService;
 import com.jgxq.front.service.impl.TeamServiceImpl;
 import org.springframework.beans.BeanUtils;
@@ -42,21 +44,6 @@ public class PlayerController {
 
     @Autowired
     private TeamServiceImpl teamService;
-
-    @PutMapping("{id}")
-    public ResponseMessage updatePlayer(@PathVariable("id") Integer id,
-                                        @RequestBody @Validated PlayerReq playerReq) {
-        String infos = JSON.toJSONString(playerReq.getInfos());
-
-        Player player = new Player();
-        BeanUtils.copyProperties(playerReq, player);
-        player.setInfos(infos);
-        player.setId(id);
-
-        boolean flag = playerService.updateById(player);
-
-        return new ResponseMessage(flag);
-    }
 
     @GetMapping("{id}")
     public ResponseMessage getPlayerById(@PathVariable("id") Integer id) {
