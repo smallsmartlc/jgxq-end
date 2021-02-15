@@ -40,7 +40,7 @@ public class MatchServiceImpl extends ServiceImpl<MatchMapper, Match> implements
         matchQuery.select("id", "title", "home_team", "visiting_team", "start_time", "link","home_score","visiting_score")
                 .ge("start_time", start);
         if(teamId!=null){
-            matchQuery.eq("home_team",teamId).or().eq("visiting_team",teamId);
+            matchQuery.nested(i->i.eq("home_team",teamId).or().eq("visiting_team",teamId));
         }
         Page page = new Page(pageNum,pageSize);
         matchMapper.selectPage(page,matchQuery);

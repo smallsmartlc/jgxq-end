@@ -12,7 +12,6 @@ import com.jgxq.core.anotation.AllowAccess;
 import com.jgxq.core.anotation.UserPermissionConf;
 import com.jgxq.core.enums.CommonErrorCode;
 import com.jgxq.core.resp.ResponseMessage;
-import com.jgxq.front.define.TagType;
 import com.jgxq.front.entity.News;
 import com.jgxq.front.entity.Tag;
 import com.jgxq.front.service.TagService;
