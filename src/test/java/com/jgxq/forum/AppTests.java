@@ -56,7 +56,7 @@ class AppTests {
         }
     }
 
-    @Test
+//    @Test
     void addMatchPlayer(){
         String source =
                 "[{\"name\":\"顾添承\",\"number\":\"2\"},{\"name\":\"杨华钦\",\"number\":\"3\"},{\"name\":\"周创\",\"number\":\"5\"},{\"name\":\"徐翔\",\"number\":\"9\"},{\"name\":\"白云飞\",\"number\":\"12\"},{\"name\":\"杨海峰\",\"number\":\"17\"},{\"name\":\"谭渝川\",\"number\":\"18\"},{\"name\":\"吴浩玮\",\"number\":\"20\"},{\"name\":\"龚锐\",\"number\":\"21\"},{\"name\":\"杨卓凡\",\"number\":\"22\"},{\"name\":\"曾柯\",\"number\":\"23\"},{\"name\":\"夏天\",\"number\":\"1\"},{\"name\":\"伊布热依木·约麦尔\",\"number\":\"19\"},{\"name\":\"胡安勇\",\"number\":\"35\"}]";

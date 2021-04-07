@@ -37,24 +37,24 @@ public class MatchServiceImpl extends ServiceImpl<MatchMapper, Match> implements
     public Page<MatchBasicRes> listMatches(Date start, String teamId, Integer pageNum, Integer pageSize) {
         QueryWrapper<Match> matchQuery = new QueryWrapper<>();
 
-        matchQuery.select("id", "title", "home_team", "visiting_team", "start_time", "link","home_score","visiting_score")
+        matchQuery.select("id", "title", "home_team", "visiting_team", "start_time", "link", "home_score", "visiting_score")
                 .ge("start_time", start);
-        if(teamId!=null){
-            matchQuery.nested(i->i.eq("home_team",teamId).or().eq("visiting_team",teamId));
+        if (teamId != null) {
+            matchQuery.nested(i -> i.eq("home_team", teamId).or().eq("visiting_team", teamId));
         }
-        Page page = new Page(pageNum,pageSize);
-        matchMapper.selectPage(page,matchQuery);
+        Page page = new Page(pageNum, pageSize);
+        matchMapper.selectPage(page, matchQuery);
         List<Match> matchList = page.getRecords();
-        if(matchList.isEmpty() && DateUtils.sameDate(new Date(),start)){
+        if (matchList.isEmpty() && DateUtils.sameDate(new Date(), start)) {
             QueryWrapper<Match> tempQuery = new QueryWrapper<>();
-            tempQuery.lt("start_time",start).last("limit "+pageSize);
-            if(teamId!=null){
-                tempQuery.eq("home_team",teamId).or().eq("visiting_team",teamId);
+            tempQuery.lt("start_time", start).last("limit " + pageSize).orderByDesc("start_time");
+            if (teamId != null) {
+                tempQuery.eq("home_team", teamId).or().eq("visiting_team", teamId);
             }
             matchList = matchMapper.selectList(tempQuery);
         }
         List<MatchBasicRes> res = matchListToBasicRes(matchList);
-        Page<MatchBasicRes> resPage = new Page<>(page.getCurrent(),page.getSize(),page.getTotal());
+        Page<MatchBasicRes> resPage = new Page<>(page.getCurrent(), page.getSize(), page.getTotal());
         resPage.setRecords(res);
         return resPage;
     }
@@ -62,10 +62,10 @@ public class MatchServiceImpl extends ServiceImpl<MatchMapper, Match> implements
     @Override
     public List<MatchBasicRes> homeMatches(Integer size, String teamId) {
         QueryWrapper<Match> matchQuery = new QueryWrapper<>();
-        matchQuery.select("id", "title", "home_team", "visiting_team", "start_time", "link","home_score","visiting_score")
+        matchQuery.select("id", "title", "home_team", "visiting_team", "start_time", "link", "home_score", "visiting_score")
                 .orderByAsc("abs(TIMESTAMPDIFF(SECOND,start_time,now()))").last("limit " + size);
-        if(teamId!=null){
-            matchQuery.eq("home_team",teamId).or().eq("visiting_team",teamId);
+        if (teamId != null) {
+            matchQuery.eq("home_team", teamId).or().eq("visiting_team", teamId);
         }
         List<Match> matchList = matchMapper.selectList(matchQuery);
         List<MatchBasicRes> res = matchListToBasicRes(matchList);
@@ -81,7 +81,7 @@ public class MatchServiceImpl extends ServiceImpl<MatchMapper, Match> implements
         return res;
     }
 
-    private List<MatchBasicRes> matchListToBasicRes(List<Match> matchList){
+    private List<MatchBasicRes> matchListToBasicRes(List<Match> matchList) {
         Set<Integer> teamIds = new HashSet<>();
         matchList.forEach(m -> {
             teamIds.add(m.getHomeTeam());
@@ -97,10 +97,10 @@ public class MatchServiceImpl extends ServiceImpl<MatchMapper, Match> implements
             BeanUtils.copyProperties(t, match);
             TeamBasicRes homeTeam = map.get(t.getHomeTeam());
             TeamBasicRes visitingTeam = map.get(t.getVisitingTeam());
-            if(homeTeam == null){
+            if (homeTeam == null) {
                 homeTeam = delete;
             }
-            if(visitingTeam == null){
+            if (visitingTeam == null) {
                 visitingTeam = delete;
             }
             match.setHomeTeam(homeTeam);
