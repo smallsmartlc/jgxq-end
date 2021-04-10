@@ -141,12 +141,13 @@ public class NewsController {
     @AllowAccess
     public ResponseMessage pageNews(@PathVariable("pageNum") Integer pageNum,
                                     @PathVariable("pageSize") Integer pageSize,
+                                    @RequestParam(value = "topNews", defaultValue = "false") Boolean topNews,
                                     @RequestParam(value = "keyword", required = false) String keyword) {
-        if(!StringUtils.isEmpty(keyword)){
-            Page<NewsBasicRes> page = newsService.searchNewsPage(pageNum, pageSize,keyword);
+        if (!StringUtils.isEmpty(keyword)) {
+            Page<NewsBasicRes> page = newsService.searchNewsPage(pageNum, pageSize, keyword);
             return new ResponseMessage(page);
         }
-        Page<NewsBasicRes> list = newsService.pageNews(pageNum, pageSize);
+        Page<NewsBasicRes> list = newsService.pageNews(pageNum, pageSize,topNews);
         return new ResponseMessage(list);
     }
 

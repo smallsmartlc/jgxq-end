@@ -57,11 +57,22 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News> implements Ne
     private EsUtils esClient;
 
     @Override
-    public Page<NewsBasicRes> pageNews(Integer pageNum, Integer pageSize) {
+    public Page<NewsBasicRes> pageNews(Integer pageNum, Integer pageSize,Boolean topNews) {
         Page<News> page = new Page<>(pageNum, pageSize);
         QueryWrapper<News> wrapper = new QueryWrapper<>();
         wrapper.select("id", "title", "cover").le("create_at", new Date(System.currentTimeMillis()))
                 .orderByDesc("create_at");
+        if(topNews){
+            List<Integer> ids = new ArrayList<>();
+            try {
+                ids = redisCache.lrangeInt(RedisKeys.top_news.getKey());
+            } catch (Exception e) {
+                System.err.println("redis服务器异常");
+            }
+            if(!ids.isEmpty()){
+                wrapper.notIn("id",ids);
+            }
+        }
         newsMapper.selectPage(page, wrapper);
         List<NewsBasicRes> newsBasicList = NewsListToBasicRes(page.getRecords());
         Page<NewsBasicRes> resPage = new Page<>(page.getCurrent(), page.getSize(), page.getTotal());
@@ -174,16 +185,6 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News> implements Ne
                 newsQuery.last("limit " + size);
             }
             res = newsMapper.selectList(newsQuery);
-        }
-        if (size != null && size - res.size() > 0) {
-            QueryWrapper<News> wrapper = new QueryWrapper<>();
-            wrapper.select("id", "title", "cover").le("create_at", new Date(System.currentTimeMillis()))
-                    .orderByDesc("create_at").last("limit " + size);
-            if (!ids.isEmpty()) {
-                wrapper.notIn("id", ids);
-            }
-            List<News> temp = newsMapper.selectList(wrapper);
-            res.addAll(temp);
         }
         return NewsListToBasicRes(res);
     }

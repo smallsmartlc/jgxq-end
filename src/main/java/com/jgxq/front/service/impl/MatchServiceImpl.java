@@ -38,7 +38,7 @@ public class MatchServiceImpl extends ServiceImpl<MatchMapper, Match> implements
         QueryWrapper<Match> matchQuery = new QueryWrapper<>();
 
         matchQuery.select("id", "title", "home_team", "visiting_team", "start_time", "link", "home_score", "visiting_score")
-                .ge("start_time", start);
+                .ge("start_time", start).orderByAsc("start_time");
         if (teamId != null) {
             matchQuery.nested(i -> i.eq("home_team", teamId).or().eq("visiting_team", teamId));
         }
