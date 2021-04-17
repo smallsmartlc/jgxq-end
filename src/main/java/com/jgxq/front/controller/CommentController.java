@@ -52,10 +52,10 @@ public class CommentController {
         commentService.save(comment);
 
         try {
-            if (commentReq.getTarget()!=null && !userkey.equals(commentReq.getTarget())) {
+            if (commentReq.getTarget() != null && !userkey.equals(commentReq.getTarget())) {
                 messageService.sendCommentMessage(userkey, commentReq.getTarget(), commentReq.getType(), commentReq.getObjectId(), commentReq.getContent());
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             System.err.println("消息发送异常");
         }
         return new ResponseMessage(comment.getId());
