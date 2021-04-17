@@ -106,8 +106,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public UserActiveRes getUserActiveRes(String target) {
-        UserLoginRes user = userToLoginRes(getUserByPK("userkey",target));
-        if(user == null){
+        UserLoginRes user = userToLoginRes(getUserByPK("userkey", target));
+        if (user == null) {
             return null;
         }
         UserActiveRes res = new UserActiveRes();
@@ -117,10 +117,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         QueryWrapper<Focus> focusQuery = new QueryWrapper<>();
         QueryWrapper<Focus> fansQuery = new QueryWrapper<>();
 
-        talkQuery.eq("author",target);
-        commentQuery.eq("userkey",target);
-        focusQuery.eq("userkey",target);
-        fansQuery.eq("target",target);
+        talkQuery.eq("author", target);
+        commentQuery.eq("userkey", target);
+        focusQuery.eq("userkey", target);
+        fansQuery.eq("target", target);
 
         res.setTalks(talkMapper.selectCount(talkQuery));
         res.setComments(commentMapper.selectCount(commentQuery));
@@ -141,14 +141,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public UserLoginRes userToLoginRes(User user) {
         TeamBasicRes team = teamService.getBasicTeamById(user.getHomeTeam());
         UserLoginRes userRes = new UserLoginRes();
-        BeanUtils.copyProperties(user,userRes);
+        BeanUtils.copyProperties(user, userRes);
         userRes.setAuthor(user.getAuthor().equals(BooleanEnum.True.getValue()));
         userRes.setHomeTeam(team);
         return userRes;
     }
 
     public List<UserLoginRes> getUserInfoByKeyList(Collection<String> userkeyList) {
-        if(userkeyList.isEmpty()){
+        if (userkeyList.isEmpty()) {
             return Collections.emptyList();
         }
         QueryWrapper<User> userQuery = new QueryWrapper<>();
@@ -161,19 +161,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         List<UserLoginRes> resList = users.stream().map(u -> {
             UserLoginRes res = new UserLoginRes();
             BeanUtils.copyProperties(u, res);
-            res.setHomeTeam(teamMap.get(u.getId()));
+            res.setHomeTeam(teamMap.get(u.getHomeTeam()));
             return res;
         }).collect(Collectors.toList());
         return resList;
     }
 
-    public List<UserBasicRes> getUserBasicByKeyList(Collection<String> userkeyList){
-        if(userkeyList.isEmpty()){
+    public List<UserBasicRes> getUserBasicByKeyList(Collection<String> userkeyList) {
+        if (userkeyList.isEmpty()) {
             return Collections.emptyList();
         }
         QueryWrapper<User> userQuery = new QueryWrapper<>();
-        userQuery.select("userkey","nick_name","head_image")
-                .in("userkey",userkeyList);
+        userQuery.select("userkey", "nick_name", "head_image")
+                .in("userkey", userkeyList);
         List<User> userList = userMapper.selectList(userQuery);
         List<UserBasicRes> resList = userList.stream().map(u -> {
             UserBasicRes res = new UserBasicRes();
@@ -189,7 +189,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         wrapper.select("userkey", "nick_name")
                 .eq("userkey", userKey);
         User user = userMapper.selectOne(wrapper);
-        if(user == null){
+        if (user == null) {
             return null;
         }
         AuthorRes res = new AuthorRes();
