@@ -34,13 +34,17 @@ public class MatchServiceImpl extends ServiceImpl<MatchMapper, Match> implements
     private TeamServiceImpl teamService;
 
     @Override
-    public Page<MatchBasicRes> listMatches(Date start, String teamId, Integer pageNum, Integer pageSize) {
+    public Page<MatchBasicRes> listMatches(Date start, String teamId, Integer pageNum, Integer pageSize, Boolean past) {
         QueryWrapper<Match> matchQuery = new QueryWrapper<>();
 
-        matchQuery.select("id", "title", "home_team", "visiting_team", "start_time", "link", "home_score", "visiting_score")
-                .ge("start_time", start).orderByAsc("start_time");
+        matchQuery.select("id", "title", "home_team", "visiting_team", "start_time", "link", "home_score", "visiting_score");
         if (teamId != null) {
             matchQuery.nested(i -> i.eq("home_team", teamId).or().eq("visiting_team", teamId));
+        }
+        if(past){
+            matchQuery.lt("start_time", start).orderByDesc("start_time");
+        }else{
+            matchQuery.ge("start_time", start).orderByAsc("start_time");
         }
         Page page = new Page(pageNum, pageSize);
         matchMapper.selectPage(page, matchQuery);

@@ -60,7 +60,7 @@ public class MatchController {
         NewsBasicRes newsBasic = null;
         if (match.getMatchNews() != null) {
             News news = newsService.getById(match.getMatchNews());
-            if(news != null){
+            if (news != null) {
                 newsBasic = new NewsBasicRes();
                 BeanUtils.copyProperties(news, newsBasic);
             }
@@ -87,13 +87,14 @@ public class MatchController {
     public ResponseMessage PageMatches(@RequestParam(value = "start", required = false) Date start,
                                        @RequestParam(value = "teamId", required = false) String teamId,
                                        @RequestParam("pageNum") Integer pageNum,
-                                       @RequestParam("pageSize") Integer pageSize) {
+                                       @RequestParam("pageSize") Integer pageSize,
+                                       @RequestParam(value = "past", defaultValue = "false") Boolean past) {
         if (start == null) {
             start = DateUtils.initDateByDay();
         } else {
             start = DateUtils.initDateByDay(start);
         }
-        Page<MatchBasicRes> res = matchService.listMatches(start, teamId, pageNum, pageSize);
+        Page<MatchBasicRes> res = matchService.listMatches(start, teamId, pageNum, pageSize, past);
 
         return new ResponseMessage(res);
     }

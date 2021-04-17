@@ -18,7 +18,7 @@ import java.util.List;
  */
 public interface MatchService extends IService<Match> {
 
-    Page<MatchBasicRes> listMatches(Date start, String teamId, Integer pageNum, Integer pageSize);
+    Page<MatchBasicRes> listMatches(Date start, String teamId, Integer pageNum, Integer pageSize, Boolean past);
 
     List<MatchBasicRes> homeMatches(Integer size, String teamId);
 
