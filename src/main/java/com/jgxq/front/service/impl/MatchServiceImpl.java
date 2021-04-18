@@ -41,9 +41,9 @@ public class MatchServiceImpl extends ServiceImpl<MatchMapper, Match> implements
         if (teamId != null) {
             matchQuery.nested(i -> i.eq("home_team", teamId).or().eq("visiting_team", teamId));
         }
-        if(past){
+        if (past) {
             matchQuery.lt("start_time", start).orderByDesc("start_time");
-        }else{
+        } else {
             matchQuery.ge("start_time", start).orderByAsc("start_time");
         }
         Page page = new Page(pageNum, pageSize);
