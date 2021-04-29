@@ -1,5 +1,6 @@
 package com.jgxq.front.controller;
 
+import com.jgxq.core.anotation.AllowAccess;
 import com.jgxq.core.anotation.UserPermissionConf;
 import com.jgxq.core.enums.CommonErrorCode;
 import com.jgxq.core.exception.SmartException;
@@ -34,6 +35,7 @@ public class FileController {
     @Autowired
     private FileServiceImpl fileService;
 
+    @AllowAccess
     @PostMapping("img/upload/{folder}")
     public ResponseMessage uploadImg(@RequestParam("file") MultipartFile file,
                                      @PathVariable("folder") String folder) {

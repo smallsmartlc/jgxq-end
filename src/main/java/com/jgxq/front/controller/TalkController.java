@@ -4,6 +4,7 @@ package com.jgxq.front.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jgxq.common.dto.TalkHit;
+import com.jgxq.common.dto.TextDto;
 import com.jgxq.common.req.NewsReq;
 import com.jgxq.common.res.TalkBasicRes;
 import com.jgxq.common.res.TalkRes;
@@ -48,11 +49,11 @@ public class TalkController {
     private UserServiceImpl userService;
 
     @PostMapping
-    public ResponseMessage addTalk(@RequestParam String text,
+    public ResponseMessage addTalk(@RequestBody @Validated TextDto text,
                                    @RequestAttribute("userKey") String userKey) {
         Talk talk = new Talk();
         talk.setAuthor(userKey);
-        talk.setText(text);
+        talk.setText(text.getText());
         talkService.save(talk);
         return new ResponseMessage(talk.getId());
     }
