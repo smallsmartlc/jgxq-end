@@ -93,6 +93,7 @@ public class CommentController {
     }
 
     @GetMapping("reply/{commentId}/{pageNum}/{pageSize}")
+    @AllowAccess
     private ResponseMessage pageReply(@PathVariable(value = "commentId") Integer commentId,
                                       @PathVariable("pageNum") Integer pageNum,
                                       @PathVariable("pageSize") Integer pageSize,
@@ -103,6 +104,7 @@ public class CommentController {
     }
 
     @GetMapping("page/user")
+    @AllowAccess
     public ResponseMessage pageComment(@RequestParam(value = "target", required = false) String target,
                                        @RequestAttribute(value = "userKey") String userKey,
                                        @RequestParam("pageNum") Integer pageNum,
