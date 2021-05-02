@@ -4,10 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jgxq.common.dto.CommentHit;
 import com.jgxq.common.dto.CommentHitDto;
-import com.jgxq.common.res.CommentRes;
-import com.jgxq.common.res.CommentUserRes;
-import com.jgxq.common.res.ReplyRes;
-import com.jgxq.common.res.UserLoginRes;
+import com.jgxq.common.res.*;
 import com.jgxq.front.define.ObjectType;
 import com.jgxq.front.define.InteractionType;
 import com.jgxq.front.entity.Comment;
@@ -125,6 +122,68 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         Page<CommentRes> resPage = new Page<>(page.getCurrent(), page.getSize(), page.getTotal());
         resPage.setRecords(result);
 
+        return resPage;
+    }
+
+    @Override
+    public Page<CommentTalkRes> pageMainComment(Byte type, Integer objectId, String userKey, Integer pageNum, Integer pageSize) {
+        Page<Comment> page = new Page<>(pageNum, pageSize);
+        QueryWrapper<Comment> commentQuery = new QueryWrapper<>();
+        commentQuery.eq("object_id", objectId)
+                .eq("type", type)
+                .eq("parent_id", 0);
+        commentMapper.selectPage(page, commentQuery);
+
+        List<Comment> records = page.getRecords();
+        if (records.isEmpty()) {
+            return new Page(page.getCurrent(),page.getSize(),page.getTotal());
+        }
+
+
+        // 加载回复
+        List<Integer> commentIds = records.stream().map(Comment::getId).collect(Collectors.toList());
+        QueryWrapper<Comment> replyQuery = new QueryWrapper<>();
+        replyQuery.eq("object_id", objectId)
+                .eq("type", type)
+                .in("parent_id", commentIds);
+        List<Comment> replys = commentMapper.selectList(replyQuery);
+        List<String> replyUserList = replys.stream().map(Comment::getUserkey).collect(Collectors.toList());
+
+        // 通过评论和回复的userkey获取用户
+        Set<String> userKeyList = records.stream().map(Comment::getUserkey).collect(Collectors.toSet());
+        userKeyList.addAll(replyUserList);
+        List<UserLoginRes> userInfos = userService.getUserInfoByKeyList(userKeyList);
+        Map<String, UserLoginRes> userMap = userInfos.stream().collect(Collectors.toMap(UserLoginRes::getUserkey, u -> u));
+
+        List<ReplyTalkRes> ReplyTalkResList = replys.stream().map(r -> {
+            ReplyTalkRes replyTalkRes = new ReplyTalkRes();
+            BeanUtils.copyProperties(r, replyTalkRes);
+            replyTalkRes.setUserkey(userMap.get(r.getUserkey()));
+            return replyTalkRes;
+        }).collect(Collectors.toList());
+        Map<Integer, ReplyTalkRes> replyIdMap = ReplyTalkResList.stream().collect(Collectors.toMap(ReplyTalkRes::getId, r -> r));
+        Map<Integer,List<ReplyTalkRes>> replyListMap = new HashMap<>();
+        for (ReplyTalkRes reply : ReplyTalkResList) {
+            if(reply.getReplyId()!=null && reply.getReplyId() != 0){
+                ReplyTalkRes temp = replyIdMap.get(reply.getReplyId());
+                if(temp != null){
+                    reply.setReply(temp.getUserkey());
+                }
+            }
+            replyListMap.putIfAbsent(reply.getParentId(),new ArrayList<>());
+            replyListMap.get(reply.getParentId()).add(reply);
+        }
+        List<CommentTalkRes> result = records.stream().map(c -> {
+            Integer id = c.getId();
+            CommentTalkRes commentTalkRes = new CommentTalkRes();
+            BeanUtils.copyProperties(c, commentTalkRes);
+            commentTalkRes.setUserkey(userMap.get(c.getUserkey()));
+            commentTalkRes.setReplyList(replyListMap.getOrDefault(c.getId(),new ArrayList<>()));
+            return commentTalkRes;
+        }).collect(Collectors.toList());
+
+        Page resPage = new Page(page.getCurrent(), page.getSize(), page.getTotal());
+        resPage.setRecords(result);
         return resPage;
     }
 

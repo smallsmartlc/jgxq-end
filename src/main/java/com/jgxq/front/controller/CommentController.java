@@ -5,14 +5,12 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jgxq.common.req.CommentReq;
 import com.jgxq.common.res.CommentRes;
+import com.jgxq.common.res.CommentTalkRes;
 import com.jgxq.common.res.CommentUserRes;
 import com.jgxq.common.res.ReplyRes;
 import com.jgxq.core.anotation.AllowAccess;
 import com.jgxq.core.anotation.UserPermissionConf;
-import com.jgxq.core.enums.CommonErrorCode;
-import com.jgxq.core.exception.SmartException;
 import com.jgxq.core.resp.ResponseMessage;
-import com.jgxq.front.define.ObjectType;
 import com.jgxq.front.entity.Comment;
 import com.jgxq.front.service.CommentService;
 import com.jgxq.front.service.impl.MessageServiceImpl;
@@ -20,8 +18,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.constraints.NotBlank;
 
 /**
  * <p>
@@ -79,6 +75,19 @@ public class CommentController {
                                         @PathVariable("pageNum") Integer pageNum,
                                         @PathVariable("pageSize") Integer pageSize) {
         Page<CommentRes> page = commentService.pageComment(type, objectId, userKey, pageNum, pageSize);
+
+        return new ResponseMessage(page);
+    }
+
+    @GetMapping("main/{type}/{objId}/{pageNum}/{pageSize}")
+    @AllowAccess
+    private ResponseMessage pageMainComment(@PathVariable(value = "type") Byte type,
+                                        @PathVariable(value = "objId") Integer objectId,
+                                        @RequestAttribute(value = "userKey", required = false) String userKey,
+                                        @PathVariable("pageNum") Integer pageNum,
+                                        @PathVariable("pageSize") Integer pageSize) {
+        // 用于小程序端talk页面直接展示回复
+        Page<CommentTalkRes> page = commentService.pageMainComment(type, objectId, userKey, pageNum, pageSize);
 
         return new ResponseMessage(page);
     }
