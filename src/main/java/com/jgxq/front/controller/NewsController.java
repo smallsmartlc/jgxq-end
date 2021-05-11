@@ -9,6 +9,7 @@ import com.jgxq.common.req.NewsReq;
 import com.jgxq.common.req.TagReq;
 import com.jgxq.common.res.*;
 import com.jgxq.core.anotation.AllowAccess;
+import com.jgxq.core.anotation.AuthorPermisson;
 import com.jgxq.core.anotation.UserPermissionConf;
 import com.jgxq.core.enums.CommonErrorCode;
 import com.jgxq.core.resp.ResponseMessage;
@@ -55,6 +56,7 @@ public class NewsController {
     private TagService tagService;
 
     @PostMapping
+    @AuthorPermisson
     public ResponseMessage addNews(@RequestBody @Validated NewsReq newsReq,
                                    @RequestAttribute("userKey") String userKey) {
         News news = new News();
@@ -76,6 +78,7 @@ public class NewsController {
 
     @PutMapping("{id}")
     @Transactional
+    @AuthorPermisson
     public ResponseMessage updateNews(@PathVariable("id") Integer id,
                                       @RequestBody @Validated NewsReq newsReq,
                                       @RequestAttribute("userKey") String userKey) {
@@ -101,6 +104,7 @@ public class NewsController {
     }
 
     @DeleteMapping("{id}")
+    @AuthorPermisson
     public ResponseMessage deleteNews(@PathVariable("id") Integer id,
                                       @RequestAttribute("userKey") String userKey) {
         UpdateWrapper<News> newsUpdate = new UpdateWrapper<>();
