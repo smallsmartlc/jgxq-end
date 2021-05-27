@@ -11,6 +11,7 @@ import com.jgxq.core.resp.ResponseMessage;
 import com.jgxq.front.define.InteractionType;
 import com.jgxq.front.entity.*;
 import com.jgxq.front.service.impl.*;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -106,7 +107,7 @@ public class UserController {
     @GetMapping("info")
     public ResponseMessage getUserInfo(@RequestParam(value = "target", required = false) String target,
                                        @RequestAttribute(value = "userKey") String userKey) {
-        if (target == null) {
+        if (target == null || StringUtils.isEmpty(target)) {
             target = userKey;
         }
         UserActiveRes res = userService.getUserActiveRes(target);

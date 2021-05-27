@@ -97,7 +97,7 @@ public class CommentController {
     private ResponseMessage pageReply(@PathVariable(value = "commentId") Integer commentId,
                                       @PathVariable("pageNum") Integer pageNum,
                                       @PathVariable("pageSize") Integer pageSize,
-                                      @RequestAttribute(value = "userKey") String userKey) {
+                                      @RequestAttribute(value = "userKey", required = false) String userKey) {
         Page<ReplyRes> page = commentService.pageReply(commentId, pageNum, pageSize, userKey);
 
         return new ResponseMessage(page);
@@ -106,7 +106,7 @@ public class CommentController {
     @GetMapping("page/user")
     @AllowAccess
     public ResponseMessage pageComment(@RequestParam(value = "target", required = false) String target,
-                                       @RequestAttribute(value = "userKey") String userKey,
+                                       @RequestAttribute(value = "userKey", required = false) String userKey,
                                        @RequestParam("pageNum") Integer pageNum,
                                        @RequestParam("pageSize") Integer pageSize) {
         if (target == null) {
