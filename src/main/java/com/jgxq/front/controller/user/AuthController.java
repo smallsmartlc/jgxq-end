@@ -88,10 +88,14 @@ public class AuthController {
     public ResponseMessage getCode(@PathVariable("email") @Email(message = "邮箱地址不合法!") String email,
                                    @PathVariable("type") VerificationCodeType type) {
 
+        User user = userService.getUserByPK("email", email);
         if (type != VerificationCodeType.REG) {
-            User user = userService.getUserByPK("email", email);
             if (user == null) {
                 return new ResponseMessage(ForumErrorCode.Email_Send_Error.getErrorCode(), "该账号不存在");
+            }
+        }else{
+            if(user!=null){
+                return new ResponseMessage(ForumErrorCode.Email_Send_Error.getErrorCode(), "该账号已存在");
             }
         }
         String code = LoginUtils.createValidateCode(6);
@@ -225,8 +229,11 @@ public class AuthController {
         }
         String host = request.getServerName();
         if (!CookieUtils.LOCALHOST.equals(host)) {
-//            cookie.setDomain(host.substring(host.indexOf(".") + 1));
+//            if(host.split(".").length > 2){
+//                cookie.setDomain(host.substring(host.indexOf(".") + 1));
+//            }else {
             cookie.setDomain(host);
+//            }
         }
         cookie.setPath("/");
         response.addCookie(cookie);
