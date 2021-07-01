@@ -61,19 +61,19 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, Team> implements Te
 
     @Override
     public Page<TeamBasicRes> searchTeam(Integer pageNum, Integer pageSize, String keyword) {
-//        return pageTeamEs(pageNum,pageSize,keyword);//es搜索
-        Page page = new Page(pageNum, pageSize);//fixme sql
-        page(page,new QueryWrapper<Team>().like("`name`",keyword).orderByAsc("LENGTH(`name`)"));
-        List<Team> records = page.getRecords();
-        List<TeamBasicRes> res = new ArrayList<>(records.size());
-        records.forEach((team) -> {
-            TeamBasicRes teamBasic = new TeamBasicRes();
-            BeanUtils.copyProperties(team, teamBasic);
-            res.add(teamBasic);
-        });
-        Page<TeamBasicRes> resPage = new Page<>(page.getCurrent(),page.getSize(),page.getTotal());
-        resPage.setRecords(res);
-        return resPage;
+        return pageTeamEs(pageNum,pageSize,keyword);//es搜索
+//        Page page = new Page(pageNum, pageSize);//fixme sql
+//        page(page,new QueryWrapper<Team>().like("`name`",keyword).orderByAsc("LENGTH(`name`)"));
+//        List<Team> records = page.getRecords();
+//        List<TeamBasicRes> res = new ArrayList<>(records.size());
+//        records.forEach((team) -> {
+//            TeamBasicRes teamBasic = new TeamBasicRes();
+//            BeanUtils.copyProperties(team, teamBasic);
+//            res.add(teamBasic);
+//        });
+//        Page<TeamBasicRes> resPage = new Page<>(page.getCurrent(),page.getSize(),page.getTotal());
+//        resPage.setRecords(res);
+//        return resPage;
     }
 
     private Page<TeamBasicRes> pageTeamEs(Integer pageNum, Integer pageSize, String keyword){

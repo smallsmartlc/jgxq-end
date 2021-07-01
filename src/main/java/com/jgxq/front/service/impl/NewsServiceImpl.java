@@ -190,20 +190,20 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News> implements Ne
     }
 
     public Page<NewsBasicRes> searchNewsPage(Integer pageNum, Integer pageSize, String keyword) {
-//        return searchNewsPageEs(pageNum, pageSize, keyword);//es
-        Page<News> page = new Page<>(pageNum, pageSize); //fixme sql
-        QueryWrapper<News> wrapper = new QueryWrapper<>();
-        wrapper.like("title", keyword).orderByAsc("LENGTH(title)");
-        newsMapper.selectPage(page, wrapper);
-        List<News> newsList = page.getRecords();
-        List<NewsBasicRes> newsBasicList = newsList.stream().map(news -> {
-            NewsBasicRes newsBasicRes = new NewsBasicRes();
-            BeanUtils.copyProperties(news, newsBasicRes);
-            return newsBasicRes;
-        }).collect(Collectors.toList());
-        Page<NewsBasicRes> resPage = new Page<>(page.getCurrent(), page.getSize(), page.getTotal());
-        resPage.setRecords(newsBasicList);
-        return resPage;
+        return searchNewsPageEs(pageNum, pageSize, keyword);//es
+//        Page<News> page = new Page<>(pageNum, pageSize); //fixme sql
+//        QueryWrapper<News> wrapper = new QueryWrapper<>();
+//        wrapper.like("title", keyword).orderByAsc("LENGTH(title)");
+//        newsMapper.selectPage(page, wrapper);
+//        List<News> newsList = page.getRecords();
+//        List<NewsBasicRes> newsBasicList = newsList.stream().map(news -> {
+//            NewsBasicRes newsBasicRes = new NewsBasicRes();
+//            BeanUtils.copyProperties(news, newsBasicRes);
+//            return newsBasicRes;
+//        }).collect(Collectors.toList());
+//        Page<NewsBasicRes> resPage = new Page<>(page.getCurrent(), page.getSize(), page.getTotal());
+//        resPage.setRecords(newsBasicList);
+//        return resPage;
     }
 
     private Page<NewsBasicRes> searchNewsPageEs(Integer pageNum, Integer pageSize, String keyword) {

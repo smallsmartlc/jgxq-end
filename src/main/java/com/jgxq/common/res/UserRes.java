@@ -13,7 +13,7 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserLoginRes {
+public class UserRes {
 
     private String email;
 
@@ -28,8 +28,6 @@ public class UserLoginRes {
     private Boolean author;
 
     private Date createAt;
-
-    private String token;
 
     private TeamBasicRes homeTeam;
 

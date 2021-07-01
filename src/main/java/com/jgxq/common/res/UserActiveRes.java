@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 public class UserActiveRes {
 
-    private UserLoginRes userInfo;
+    private UserRes userInfo;
 
     private Integer talks;
 

@@ -59,12 +59,12 @@ class AppTests {
     @Test
     void addMatchPlayer(){
         String source =
-                "[{\"name\":\"龚锐\",\"number\":\"5\"},{\"name\":\"艾力卡尔·艾麦尔\",\"number\":\"11\"},{\"name\":\"热那提·艾尼瓦尔\",\"number\":\"10\"},{\"name\":\"曾之桐\",\"number\":\"7\"},{\"name\":\"王艳凯\",\"number\":\"17\"},{\"name\":\"谭渝川\",\"number\":\"9\"},{\"name\":\"柏石磊\",\"number\":\"22\"},{\"name\":\"夏天\",\"number\":\"1\"},{\"name\":\"梁锦涛\",\"number\":\"13\"},{\"name\":\"吴浩玮\",\"number\":\"20\"},{\"name\":\"杨海峰\",\"number\":\"3\"},{\"name\":\"李杰\",\"number\":\"21\"},{\"name\":\"白云飞\",\"number\":\"12\"},{\"name\":\"谢德洋\",\"number\":\"14\"},{\"name\":\"杨华钦\",\"number\":\"19\"},{\"name\":\"徐翔\",\"number\":\"18\"},{\"name\":\"周焜\",\"number\":\"25\"},{\"name\":\"杨康\",\"number\":\"16\"},{\"name\":\"曾柯\",\"number\":\"23\"}]";
+                "[{\"name\":\"Newre\",\"number\":\"1\"},{\"name\":\"Abdoulaye\",\"number\":\"4\"},{\"name\":\"Timera\",\"number\":\"6\"},{\"name\":\"LorenMalate\",\"number\":\"7\"},{\"name\":\"Raheem\",\"number\":\"8\"},{\"name\":\"Youssef\",\"number\":\"9\"},{\"name\":\"Raqeb\",\"number\":\"11\"},{\"name\":\"JaoLourenco\",\"number\":\"12\"},{\"name\":\"jahid\",\"number\":\"23\"},{\"name\":\"Budi\",\"number\":\"69\"},{\"name\":\"Bouba\",\"number\":\"99\"}]";
         List<Player> players = JSON.parseArray(source, Player.class);
         for (int i = 0; i < players.size(); i++) {
             players.get(i).setEnName("");
             players.get(i).setInfos("{\"normal\": [{\"name\": \"身价\", \"value\": \"60万欧元\"}]}");
-            players.get(i).setTeam(27);
+            players.get(i).setTeam(39);
             players.get(i).setPosition((byte) Position.AM.getValue());
             players.get(i).setWeight(0);
             players.get(i).setHeight(0);

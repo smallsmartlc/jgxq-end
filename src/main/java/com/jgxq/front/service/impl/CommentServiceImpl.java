@@ -98,8 +98,8 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 
         // 通过评论的userkey获取用户
         Set<String> userKeyList = records.stream().map(Comment::getUserkey).collect(Collectors.toSet());
-        List<UserLoginRes> userInfos = userService.getUserInfoByKeyList(userKeyList);
-        Map<String, UserLoginRes> userMap = userInfos.stream().collect(Collectors.toMap(UserLoginRes::getUserkey, u -> u));
+        List<UserRes> userInfos = userService.getUserInfoByKeyList(userKeyList);
+        Map<String, UserRes> userMap = userInfos.stream().collect(Collectors.toMap(UserRes::getUserkey, u -> u));
 
 
         List<Integer> finalHasThumb = hasThumb;
@@ -152,8 +152,8 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         // 通过评论和回复的userkey获取用户
         Set<String> userKeyList = records.stream().map(Comment::getUserkey).collect(Collectors.toSet());
         userKeyList.addAll(replyUserList);
-        List<UserLoginRes> userInfos = userService.getUserInfoByKeyList(userKeyList);
-        Map<String, UserLoginRes> userMap = userInfos.stream().collect(Collectors.toMap(UserLoginRes::getUserkey, u -> u));
+        List<UserRes> userInfos = userService.getUserInfoByKeyList(userKeyList);
+        Map<String, UserRes> userMap = userInfos.stream().collect(Collectors.toMap(UserRes::getUserkey, u -> u));
 
         List<ReplyTalkRes> ReplyTalkResList = replys.stream().map(r -> {
             ReplyTalkRes replyTalkRes = new ReplyTalkRes();
@@ -242,8 +242,8 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         Set<String> userKeyList = records.stream().map(Comment::getUserkey).collect(Collectors.toSet());
         Set<String> replyUserKetList = replyComment.stream().map(Comment::getUserkey).collect(Collectors.toSet());
         userKeyList.addAll(replyUserKetList);
-        List<UserLoginRes> userInfos = userService.getUserInfoByKeyList(userKeyList);
-        Map<String, UserLoginRes> userMap = userInfos.stream().collect(Collectors.toMap(UserLoginRes::getUserkey, u -> u));
+        List<UserRes> userInfos = userService.getUserInfoByKeyList(userKeyList);
+        Map<String, UserRes> userMap = userInfos.stream().collect(Collectors.toMap(UserRes::getUserkey, u -> u));
 
 
         List<Integer> finalHasThumb = hasThumb;

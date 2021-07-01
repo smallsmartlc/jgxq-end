@@ -3,7 +3,6 @@ package com.jgxq.common.res;
 import lombok.Data;
 
 import java.util.Date;
-import java.util.List;
 
 /**
  * <p>
@@ -17,7 +16,7 @@ import java.util.List;
 public class ReplyTalkRes {
     private Integer id;
 
-    private UserLoginRes userkey;
+    private UserRes userkey;
     /**
      * 评论
      */
@@ -33,6 +32,6 @@ public class ReplyTalkRes {
 
     private Date createAt;
 
-    private UserLoginRes reply;
+    private UserRes reply;
 
 }

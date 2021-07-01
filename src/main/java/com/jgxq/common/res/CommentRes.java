@@ -1,12 +1,8 @@
 package com.jgxq.common.res;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.jgxq.common.dto.CommentHit;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
-import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -24,7 +20,7 @@ public class CommentRes{
      * 默认为0 新闻,1 - 日白
      */
 
-    private UserLoginRes userkey;
+    private UserRes userkey;
 
     private CommentHit hits;
     /**

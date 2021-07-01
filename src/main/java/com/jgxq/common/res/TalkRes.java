@@ -1,12 +1,8 @@
 package com.jgxq.common.res;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.jgxq.common.dto.TalkHit;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
-import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -25,7 +21,7 @@ public class TalkRes {
     /**
      * 作者userkey
      */
-    private UserLoginRes author;
+    private UserRes author;
 
     private String text;
 

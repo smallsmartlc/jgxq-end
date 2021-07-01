@@ -1,14 +1,11 @@
 package com.jgxq.forum;
 
 import com.alibaba.fastjson.JSON;
-import com.jgxq.common.res.UserLoginRes;
+import com.jgxq.common.res.UserRes;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
-import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.support.master.AcknowledgedResponse;
@@ -18,7 +15,6 @@ import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.elasticsearch.client.indices.CreateIndexResponse;
 import org.elasticsearch.client.indices.GetIndexRequest;
-import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.TermQueryBuilder;
@@ -31,8 +27,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -123,7 +117,7 @@ public class EsTests {
     void updateDocument() throws IOException {
         UpdateRequest request = new UpdateRequest("smart_index", "1");
 
-        UserLoginRes userRes = new UserLoginRes();
+        UserRes userRes = new UserRes();
         userRes.setCity("贵州");
         request.doc(JSON.toJSONString(userRes), XContentType.JSON);
 

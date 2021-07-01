@@ -1,6 +1,5 @@
 package com.jgxq.common.res;
 
-import com.jgxq.common.dto.CommentHit;
 import lombok.Data;
 
 import java.util.Date;
@@ -17,7 +16,7 @@ import java.util.Date;
 public class ReplyRes {
     private Integer id;
 
-    private UserLoginRes userkey;
+    private UserRes userkey;
 
     private Integer thumbs;
 

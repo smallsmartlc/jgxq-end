@@ -8,6 +8,7 @@ import com.jgxq.common.req.UserLoginReq;
 import com.jgxq.common.req.UserRegReq;
 import com.jgxq.common.res.TeamBasicRes;
 import com.jgxq.common.res.UserLoginRes;
+import com.jgxq.common.res.UserRes;
 import com.jgxq.common.utils.CookieUtils;
 import com.jgxq.common.utils.JwtUtil;
 import com.jgxq.common.utils.LoginUtils;
@@ -75,7 +76,7 @@ public class AuthController {
             return new ResponseMessage(null);
         }
         User user = userService.getUserByPK("userkey", userKey);
-        UserLoginRes userRes = new UserLoginRes();
+        UserRes userRes = new UserRes();
         BeanUtils.copyProperties(user, userRes);
         userRes.setAuthor(user.getAuthor().equals(BooleanEnum.True.getValue()));
         TeamBasicRes team = teamService.getBasicTeamById(user.getHomeTeam());
@@ -163,6 +164,7 @@ public class AuthController {
         response.setHeader("Set-Cookie", response.getHeader("Set-Cookie") + "; SameSite=Lax");
         UserLoginRes userRes = new UserLoginRes();
         BeanUtils.copyProperties(user, userRes);
+        userRes.setToken(response.getHeader("Set-Cookie"));
         userRes.setAuthor(user.getAuthor().equals(BooleanEnum.True.getValue()));
         TeamBasicRes team = teamService.getBasicTeamById(user.getHomeTeam());
         userRes.setHomeTeam(team);
@@ -240,6 +242,7 @@ public class AuthController {
         response.setHeader("Set-Cookie", response.getHeader("Set-Cookie") + "; SameSite=Lax");
         UserLoginRes userRes = new UserLoginRes();
         BeanUtils.copyProperties(user, userRes);
+        userRes.setToken(response.getHeader("Set-Cookie"));
         TeamBasicRes team = teamService.getBasicTeamById(user.getHomeTeam());
         userRes.setHomeTeam(team);
 

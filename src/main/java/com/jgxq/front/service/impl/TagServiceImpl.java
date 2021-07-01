@@ -112,14 +112,14 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
 
     @Override
     public List<TagSearchRes> searchTag(String keyword) {
-//        return searchTagByEs(keyword);
-        return tagMapper.searchTag(keyword);//fixme 使用Sql做搜索
+        return searchTagByEs(keyword);
+//        return tagMapper.searchTag(keyword);//fixme 使用Sql做搜索
     }
 
     @Override
     public Page<TagSearchRes> pageTag(Integer pageNum, Integer pageSize, String keyword) {
-//        return pageTeamEs(pageNum, pageSize, keyword);//es
-        return tagMapper.pageTag(new Page<>(pageNum,pageSize),keyword);//fixme sql
+        return pageTeamEs(pageNum, pageSize, keyword);//es
+//        return tagMapper.pageTag(new Page<>(pageNum,pageSize),keyword);//fixme sql
     }
 
     private Page<TagSearchRes> pageTeamEs(Integer pageNum, Integer pageSize, String keyword){

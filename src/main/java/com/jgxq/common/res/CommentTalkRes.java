@@ -1,6 +1,5 @@
 package com.jgxq.common.res;
 
-import com.jgxq.common.dto.CommentHit;
 import lombok.Data;
 
 import java.util.Date;
@@ -21,7 +20,7 @@ public class CommentTalkRes {
      * 默认为0 新闻,1 - 日白
      */
 
-    private UserLoginRes userkey;
+    private UserRes userkey;
     /**
      * 评论
      */

@@ -106,7 +106,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public UserActiveRes getUserActiveRes(String target) {
-        UserLoginRes user = userToLoginRes(getUserByPK("userkey", target));
+        UserRes user = userToLoginRes(getUserByPK("userkey", target));
         if (user == null) {
             return null;
         }
@@ -138,16 +138,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return user;
     }
 
-    public UserLoginRes userToLoginRes(User user) {
+    public UserRes userToLoginRes(User user) {
         TeamBasicRes team = teamService.getBasicTeamById(user.getHomeTeam());
-        UserLoginRes userRes = new UserLoginRes();
+        UserRes userRes = new UserRes();
         BeanUtils.copyProperties(user, userRes);
         userRes.setAuthor(user.getAuthor().equals(BooleanEnum.True.getValue()));
         userRes.setHomeTeam(team);
         return userRes;
     }
 
-    public List<UserLoginRes> getUserInfoByKeyList(Collection<String> userkeyList) {
+    public List<UserRes> getUserInfoByKeyList(Collection<String> userkeyList) {
         if (userkeyList.isEmpty()) {
             return Collections.emptyList();
         }
@@ -158,8 +158,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         List<TeamBasicRes> basicTeamByIds = teamService.getBasicTeamByIds(homeTeams);
         Map<Integer, TeamBasicRes> teamMap = basicTeamByIds.stream().collect(Collectors.toMap(TeamBasicRes::getId, t -> t));
 
-        List<UserLoginRes> resList = users.stream().map(u -> {
-            UserLoginRes res = new UserLoginRes();
+        List<UserRes> resList = users.stream().map(u -> {
+            UserRes res = new UserRes();
             BeanUtils.copyProperties(u, res);
             res.setHomeTeam(teamMap.get(u.getHomeTeam()));
             return res;
